@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Text } from "@react-three/drei";
 import { SYSTEM_DIMENSIONS } from "../../data/dimensions";
 import { useAppStore } from "../../store/useAppStore";
 
@@ -22,10 +21,10 @@ export function TurbineModel() {
   const { position, bladeCount, hubRadius, bladeLength, bladeWidth, bladeThickness, bladePitchAngle, housingRadius, housingLength } = SYSTEM_DIMENSIONS.turbine;
 
   const currentX = position[0];
-  const rotationSpeed = (isSimulating && !isPaused ? 8.0 : isSelected ? 1.5 : 0.3) * simulationSpeed;
+  const rotationSpeed = (isSimulating && !isPaused ? 8.0 : isSelected ? 2.0 : 0.5) * simulationSpeed;
 
   useFrame((state, delta) => {
-    if (rotorRef.current && (isSimulating || isSelected || isHovered)) {
+    if (rotorRef.current && (isSimulating || isSelected || isHovered || true)) {
       rotorRef.current.rotation.x += delta * rotationSpeed;
     }
   });
@@ -58,16 +57,16 @@ export function TurbineModel() {
       }}
       onPointerOut={() => setHovered(null)}
     >
-      {/* Outer Protective Turbine Housing Chamber */}
+      {/* Outer Protective Turbine Housing Chamber (Semi-transparent in normal view so 12 blades are visible) */}
       <mesh rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
         <cylinderGeometry args={[housingRadius, housingRadius, housingLength, 48, 1, false]} />
         <meshStandardMaterial
-          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#334155"}
+          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#475569"}
           metalness={0.88}
-          roughness={0.22}
+          roughness={0.15}
           side={2}
-          transparent={viewMode === "cutaway" || isSelected || isHovered}
-          opacity={viewMode === "cutaway" || isSelected || isHovered ? 0.25 : 0.88}
+          transparent={true}
+          opacity={viewMode === "cutaway" || isSelected || isHovered ? 0.22 : 0.38}
           wireframe={isTechnical}
         />
       </mesh>
@@ -77,13 +76,13 @@ export function TurbineModel() {
         {/* Central Rotor Hub Disk */}
         <mesh rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
           <cylinderGeometry args={[hubRadius, hubRadius, 0.8, 32]} />
-          <meshStandardMaterial color="#d97706" metalness={0.95} roughness={0.15} />
+          <meshStandardMaterial color="#f59e0b" metalness={0.95} roughness={0.12} />
         </mesh>
 
         {/* Nose Cone Bullet Head on Rotor Hub */}
         <mesh position={[0.45, 0, 0]} rotation={[0, 0, -Math.PI / 2]} castShadow>
           <coneGeometry args={[hubRadius, 0.6, 32]} />
-          <meshStandardMaterial color="#f59e0b" metalness={0.92} roughness={0.15} />
+          <meshStandardMaterial color="#fbbf24" metalness={0.92} roughness={0.12} />
         </mesh>
 
         {/* THE 12 INDIVIDUAL TURBINE BLADES */}
@@ -93,10 +92,10 @@ export function TurbineModel() {
               <boxGeometry args={[bladeWidth, bladeLength, bladeThickness]} />
               <meshStandardMaterial
                 color="#0284c7"
-                metalness={0.95}
-                roughness={0.12}
-                emissive={isSelected ? "#0284c7" : "#000000"}
-                emissiveIntensity={0.5}
+                metalness={0.96}
+                roughness={0.1}
+                emissive={isSelected ? "#0284c7" : "#0284c7"}
+                emissiveIntensity={0.2}
               />
             </mesh>
 
@@ -119,19 +118,6 @@ export function TurbineModel() {
             opacity={0.8}
           />
         </mesh>
-      )}
-
-      {/* Show 3D Label ONLY in Technical Mode */}
-      {isTechnical && (
-        <Text
-          position={[0, housingRadius + 0.8, 0]}
-          fontSize={0.45}
-          color={isSelected ? "#38bdf8" : "#f59e0b"}
-          anchorX="center"
-          anchorY="bottom"
-        >
-          05. 12-BLADE TURBINE
-        </Text>
       )}
     </group>
   );

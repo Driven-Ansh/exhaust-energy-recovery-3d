@@ -26,48 +26,59 @@ export function MainScene() {
 
   return (
     <>
-      {/* Full 360-Degree Interactive Orbit Camera Controls */}
+      {/* 100% Unrestricted 360-Degree Orbit Controls */}
       <OrbitControls
         ref={controlsRef}
         makeDefault
         enableDamping
-        dampingFactor={0.05}
-        minDistance={1}
-        maxDistance={100}
+        dampingFactor={0.08}
+        minDistance={0.5}
+        maxDistance={120}
         minPolarAngle={0}
-        maxPolarAngle={Math.PI} // Full 360 rotation around top and bottom
+        maxPolarAngle={Math.PI} // Full 360-degree vertical and horizontal freedom
+        rotateSpeed={0.9}
+        zoomSpeed={1.2}
+        panSpeed={0.9}
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
       />
 
-      {/* Camera Position Interpolation Controller */}
+      {/* Smooth Interpolation Controller for presets & simulation */}
       <CameraController controlsRef={controlsRef} />
 
-      {/* Realistic High-Performance Studio Lighting (Zero External Network Overhead) */}
-      <hemisphereLight skyColor="#f8fafc" groundColor="#0f172a" intensity={0.8} />
-      <ambientLight intensity={isTechnical ? 0.4 : 0.6} />
+      {/* Studio Lighting System for High Contrast & Realism */}
+      <hemisphereLight skyColor="#38bdf8" groundColor="#0f172a" intensity={0.9} />
+      <ambientLight intensity={isTechnical ? 0.5 : 0.8} />
 
+      {/* Main Directional Key Light */}
       <directionalLight
-        position={[20, 25, 20]}
-        intensity={1.8}
+        position={[25, 30, 25]}
+        intensity={2.2}
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-bias={-0.0001}
       />
-      <directionalLight position={[-20, 10, -20]} intensity={0.7} />
-      <directionalLight position={[0, -15, 10]} intensity={0.4} />
 
-      <pointLight position={[0, 4, 3]} intensity={1.5} color="#38bdf8" />
-      <pointLight position={[-7.2, 3, 2]} intensity={1.2} color="#f59e0b" />
+      {/* Opposite Fill Light */}
+      <directionalLight position={[-25, -15, -20]} intensity={1.2} color="#94a3b8" />
 
-      {/* Ground Contact Shadows */}
+      {/* Back Rim Light for Outline Separation */}
+      <directionalLight position={[0, 20, -25]} intensity={1.5} color="#38bdf8" />
+
+      {/* Accent Point Lights */}
+      <pointLight position={[0, 4, 4]} intensity={2.0} color="#38bdf8" />
+      <pointLight position={[-7.2, 4, 3]} intensity={1.8} color="#f59e0b" />
+      <pointLight position={[5.25, 4, 3]} intensity={1.5} color="#cbd5e1" />
+
+      {/* Soft Ground Contact Shadow */}
       <ContactShadows
         position={[0, -4.5, 0]}
-        opacity={0.6}
-        scale={50}
-        blur={2.5}
-        far={12}
+        opacity={0.7}
+        scale={60}
+        blur={2.0}
+        far={15}
+        color="#020617"
       />
 
       {/* Background Deselect Click Handler */}

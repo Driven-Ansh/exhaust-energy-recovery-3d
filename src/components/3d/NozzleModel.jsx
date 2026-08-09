@@ -1,5 +1,4 @@
 import React from "react";
-import { Text } from "@react-three/drei";
 import { SYSTEM_DIMENSIONS } from "../../data/dimensions";
 import { useAppStore } from "../../store/useAppStore";
 
@@ -16,9 +15,7 @@ export function NozzleModel() {
 
   const { startX, endX, inletRadius, outletRadius, length } = SYSTEM_DIMENSIONS.nozzle;
   const centerX = (startX + endX) / 2;
-
-  const explodedOffset = viewMode === "exploded" ? 1.0 : 0;
-  const currentX = centerX + explodedOffset;
+  const currentX = centerX + (viewMode === "exploded" ? 1.0 : 0);
 
   return (
     <group
@@ -33,16 +30,16 @@ export function NozzleModel() {
       }}
       onPointerOut={() => setHovered(null)}
     >
-      {/* Convergent Cone Nozzle Body */}
+      {/* High-Contrast Convergent Cone Nozzle */}
       <mesh rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
         <cylinderGeometry args={[outletRadius, inletRadius, length, 48, 1, false]} />
         <meshStandardMaterial
-          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#334155"}
-          metalness={0.9}
-          roughness={0.2}
+          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#94a3b8"}
+          metalness={0.94}
+          roughness={0.15}
           side={2}
           transparent={viewMode === "cutaway"}
-          opacity={viewMode === "cutaway" ? 0.35 : 0.96}
+          opacity={viewMode === "cutaway" ? 0.35 : 1.0}
           wireframe={isTechnical}
         />
       </mesh>
@@ -50,11 +47,11 @@ export function NozzleModel() {
       {/* Nozzle Flange Rings */}
       <mesh position={[length / 2, 0, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
         <cylinderGeometry args={[inletRadius * 1.08, inletRadius * 1.08, 0.12, 32]} />
-        <meshStandardMaterial color="#1e293b" metalness={0.95} roughness={0.15} />
+        <meshStandardMaterial color="#334155" metalness={0.95} roughness={0.15} />
       </mesh>
       <mesh position={[-length / 2, 0, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
         <cylinderGeometry args={[outletRadius * 1.15, outletRadius * 1.15, 0.12, 32]} />
-        <meshStandardMaterial color="#1e293b" metalness={0.95} roughness={0.15} />
+        <meshStandardMaterial color="#334155" metalness={0.95} roughness={0.15} />
       </mesh>
 
       {/* Selection outline */}
@@ -68,19 +65,6 @@ export function NozzleModel() {
             opacity={0.8}
           />
         </mesh>
-      )}
-
-      {/* Show 3D Label ONLY in Technical Mode */}
-      {isTechnical && (
-        <Text
-          position={[0, inletRadius + 0.8, 0]}
-          fontSize={0.4}
-          color={isSelected ? "#38bdf8" : "#94a3b8"}
-          anchorX="center"
-          anchorY="bottom"
-        >
-          04. HIGH-VELOCITY NOZZLE
-        </Text>
       )}
     </group>
   );

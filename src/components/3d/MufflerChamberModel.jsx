@@ -1,5 +1,4 @@
 import React from "react";
-import { Text } from "@react-three/drei";
 import { SYSTEM_DIMENSIONS } from "../../data/dimensions";
 import { useAppStore } from "../../store/useAppStore";
 
@@ -15,9 +14,7 @@ export function MufflerChamberModel() {
   const isHovered = hoveredId === "mufflerChamber";
 
   const { position, length, radiusY, radiusZ } = SYSTEM_DIMENSIONS.mufflerChamber;
-
-  const explodedOffset = viewMode === "exploded" ? 2.0 : 0;
-  const currentX = position[0] + explodedOffset;
+  const currentX = position[0] + (viewMode === "exploded" ? 2.0 : 0);
 
   return (
     <group
@@ -32,16 +29,16 @@ export function MufflerChamberModel() {
       }}
       onPointerOut={() => setHovered(null)}
     >
-      {/* Oval / Elongated Cylindrical Housing Shell */}
+      {/* High-Contrast Machined Stainless Steel Muffler Body */}
       <mesh rotation={[0, 0, Math.PI / 2]} scale={[radiusY, 1, radiusZ]} castShadow receiveShadow>
         <cylinderGeometry args={[1, 1, length, 48, 1, false]} />
         <meshStandardMaterial
-          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#475569"}
-          metalness={0.88}
-          roughness={0.22}
+          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#cbd5e1"}
+          metalness={0.92}
+          roughness={0.18}
           side={2}
           transparent={viewMode === "cutaway"}
-          opacity={viewMode === "cutaway" ? 0.3 : 0.96}
+          opacity={viewMode === "cutaway" ? 0.35 : 1.0}
           wireframe={isTechnical}
         />
       </mesh>
@@ -59,7 +56,7 @@ export function MufflerChamberModel() {
         />
       </mesh>
 
-      {/* Structural Steel Clamp Bands around Muffler Body */}
+      {/* Heavy Anodized Steel Clamp Bands */}
       {[-length * 0.3, 0, length * 0.3].map((xOffset, i) => (
         <mesh
           key={i}
@@ -69,11 +66,11 @@ export function MufflerChamberModel() {
           castShadow
         >
           <cylinderGeometry args={[1, 1, 0.12, 32]} />
-          <meshStandardMaterial color="#1e293b" metalness={0.92} roughness={0.15} />
+          <meshStandardMaterial color="#334155" metalness={0.95} roughness={0.15} />
         </mesh>
       ))}
 
-      {/* Heavy End Caps */}
+      {/* Polished End Caps */}
       {[-length / 2, length / 2].map((xPos, idx) => (
         <mesh
           key={idx}
@@ -83,7 +80,7 @@ export function MufflerChamberModel() {
           castShadow
         >
           <cylinderGeometry args={[1, 1, 0.15, 36]} />
-          <meshStandardMaterial color="#334155" metalness={0.9} roughness={0.25} />
+          <meshStandardMaterial color="#475569" metalness={0.92} roughness={0.2} />
         </mesh>
       ))}
 
@@ -98,19 +95,6 @@ export function MufflerChamberModel() {
             opacity={0.8}
           />
         </mesh>
-      )}
-
-      {/* Show 3D Label ONLY in Technical Mode */}
-      {isTechnical && (
-        <Text
-          position={[0, radiusY + 0.9, 0]}
-          fontSize={0.45}
-          color={isSelected ? "#38bdf8" : "#94a3b8"}
-          anchorX="center"
-          anchorY="bottom"
-        >
-          03. EXHAUST / MUFFLER CHAMBER
-        </Text>
       )}
     </group>
   );
