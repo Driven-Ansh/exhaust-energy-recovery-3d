@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { OrbitControls, Environment, ContactShadows } from "@react-three/drei";
+import { OrbitControls, ContactShadows } from "@react-three/drei";
 import { EngineModel } from "./EngineModel";
 import { ExhaustPipeModel } from "./ExhaustPipeModel";
 import { MufflerChamberModel } from "./MufflerChamberModel";
@@ -35,7 +35,7 @@ export function MainScene() {
         minDistance={1}
         maxDistance={100}
         minPolarAngle={0}
-        maxPolarAngle={Math.PI} // Full 360 rotation around top and bottom!
+        maxPolarAngle={Math.PI} // Full 360 rotation around top and bottom
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
@@ -44,21 +44,22 @@ export function MainScene() {
       {/* Camera Position Interpolation Controller */}
       <CameraController controlsRef={controlsRef} />
 
-      {/* Realistic Mechanical Studio Lighting */}
-      <ambientLight intensity={isTechnical ? 0.3 : 0.75} />
+      {/* Realistic High-Performance Studio Lighting (Zero External Network Overhead) */}
+      <hemisphereLight skyColor="#f8fafc" groundColor="#0f172a" intensity={0.8} />
+      <ambientLight intensity={isTechnical ? 0.4 : 0.6} />
+
       <directionalLight
         position={[20, 25, 20]}
-        intensity={1.6}
+        intensity={1.8}
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-bias={-0.0001}
       />
-      <directionalLight position={[-20, -10, -20]} intensity={0.6} />
+      <directionalLight position={[-20, 10, -20]} intensity={0.7} />
+      <directionalLight position={[0, -15, 10]} intensity={0.4} />
+
       <pointLight position={[0, 4, 3]} intensity={1.5} color="#38bdf8" />
       <pointLight position={[-7.2, 3, 2]} intensity={1.2} color="#f59e0b" />
-
-      {/* Environment Map for Metallic Reflections */}
-      {!isTechnical && <Environment preset="city" background={false} environmentIntensity={0.85} />}
 
       {/* Ground Contact Shadows */}
       <ContactShadows
