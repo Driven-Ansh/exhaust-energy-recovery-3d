@@ -1,4 +1,4 @@
-import React, { Component, Suspense } from "react";
+import React, { Component } from "react";
 import { Canvas } from "@react-three/fiber";
 import { MainScene } from "./components/3d/MainScene";
 import { Header } from "./components/ui/Header";
@@ -57,7 +57,7 @@ export default function App() {
       {/* Main Mode Toolbar */}
       {!isPresenting && <Toolbar />}
 
-      {/* 3D WebGL Canvas */}
+      {/* Synchronous 3D WebGL Canvas */}
       <CanvasErrorBoundary>
         <Canvas
           shadows
@@ -65,13 +65,11 @@ export default function App() {
           gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
           className="w-full h-full cursor-grab active:cursor-grabbing"
         >
-          <Suspense fallback={null}>
-            <MainScene />
-          </Suspense>
+          <MainScene />
         </Canvas>
       </CanvasErrorBoundary>
 
-      {/* Interactive Right Sidebar Component Specs (Opens when clicked) */}
+      {/* Interactive Right Sidebar Component Specs */}
       {!isPresenting && <ComponentCard />}
 
       {/* 12-Phase Cinematic Simulation Control Bar */}

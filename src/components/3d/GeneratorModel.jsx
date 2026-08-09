@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Text } from "@react-three/drei";
 import { SYSTEM_DIMENSIONS } from "../../data/dimensions";
 import { useAppStore } from "../../store/useAppStore";
 
@@ -99,17 +98,19 @@ export function GeneratorModel() {
         <meshStandardMaterial color="#d97706" metalness={0.7} roughness={0.3} />
       </mesh>
 
-      {/* Large 'G' Label Stenciled on End Cap matching sketch */}
-      <Text
-        position={[-length / 2 - 0.05, 0, 0]}
-        rotation={[0, -Math.PI / 2, 0]}
-        fontSize={1.2}
-        color="#f8fafc"
-        anchorX="center"
-        anchorY="middle"
-      >
-        G
-      </Text>
+      {/* 3D Geometric 'G' Emblem on End Cap (Zero Font Network Dependencies) */}
+      <group position={[-length / 2 - 0.05, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
+        {/* Outer Ring of G */}
+        <mesh>
+          <torusGeometry args={[0.7, 0.12, 16, 32, Math.PI * 1.5]} />
+          <meshStandardMaterial color="#f8fafc" metalness={0.9} roughness={0.2} />
+        </mesh>
+        {/* Horizontal Bar of G */}
+        <mesh position={[0.2, 0, 0]}>
+          <boxGeometry args={[0.5, 0.12, 0.12]} />
+          <meshStandardMaterial color="#f8fafc" metalness={0.9} roughness={0.2} />
+        </mesh>
+      </group>
 
       {/* Selection outline */}
       {(isSelected || isHovered) && (
@@ -122,19 +123,6 @@ export function GeneratorModel() {
             opacity={0.8}
           />
         </mesh>
-      )}
-
-      {/* Show 3D Label ONLY in Technical Mode */}
-      {isTechnical && (
-        <Text
-          position={[0, radius + 1.0, 0]}
-          fontSize={0.45}
-          color={isSelected ? "#38bdf8" : "#94a3b8"}
-          anchorX="center"
-          anchorY="bottom"
-        >
-          09. ELECTRICAL GENERATOR
-        </Text>
       )}
     </group>
   );

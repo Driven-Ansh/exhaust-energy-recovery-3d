@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Text } from "@react-three/drei";
 import { SYSTEM_DIMENSIONS } from "../../data/dimensions";
 import { useAppStore } from "../../store/useAppStore";
 
@@ -67,20 +66,16 @@ export function BatteryModel() {
         />
       </mesh>
 
-      {/* High Voltage Danger Badge */}
+      {/* High Voltage Danger Badge (Geometric 3D Lightning Symbol - 0 network fonts) */}
       <mesh position={[0, 0, depth / 2 + 0.01]}>
         <planeGeometry args={[1.2, 0.8]} />
         <meshStandardMaterial color="#eab308" roughness={0.4} />
       </mesh>
-      <Text
-        position={[0, 0, depth / 2 + 0.02]}
-        fontSize={0.25}
-        color="#000000"
-        anchorX="center"
-        anchorY="middle"
-      >
-        HIGH VOLTAGE
-      </Text>
+      {/* Lightning bolt geometry */}
+      <mesh position={[0, 0, depth / 2 + 0.02]} rotation={[0, 0, -Math.PI / 6]}>
+        <boxGeometry args={[0.15, 0.5, 0.02]} />
+        <meshStandardMaterial color="#000000" />
+      </mesh>
 
       {/* Selection outline */}
       {(isSelected || isHovered) && (
@@ -93,19 +88,6 @@ export function BatteryModel() {
             opacity={0.8}
           />
         </mesh>
-      )}
-
-      {/* Show 3D Label ONLY in Technical Mode */}
-      {isTechnical && (
-        <Text
-          position={[0, height / 2 + 0.7, 0]}
-          fontSize={0.45}
-          color={isSelected ? "#38bdf8" : "#22c55e"}
-          anchorX="center"
-          anchorY="bottom"
-        >
-          11. VEHICLE BATTERY PACK ({batterySOC}%)
-        </Text>
       )}
     </group>
   );
