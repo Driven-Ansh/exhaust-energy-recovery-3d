@@ -1,109 +1,60 @@
-# Exhaust Energy Recovery System — Interactive 3D Engineering Presentation Model
+# Heavy-Duty Exhaust Energy Recovery System — Interactive 3D Presentation Model
 
-An interactive, high-fidelity 3D mechanical engineering visualization and simulation web application based **EXACTLY** on the user's hand-drawn concept sketch.
+An interactive, high-fidelity 3D mechanical engineering visualization and simulation web application based **EXACTLY** on a hand-drawn reference sketch for a heavy-vehicle exhaust energy recovery system.
 
-![3D Engineering Model Overview](https://img.shields.io/badge/Status-Complete%20%26%20Interactive-success)
-![WebGL Three.js](https://img.shields.io/badge/Graphics-WebGL%20%2F%20Three.js-blue)
-![React R3F](https://img.shields.io/badge/Framework-React%20%2B%20R3F-cyan)
+🌐 **Live Online Demo**: [https://driven-ansh.github.io/exhaust-energy-recovery-3d/](https://driven-ansh.github.io/exhaust-energy-recovery-3d/)  
+📦 **GitHub Repository**: [https://github.com/Driven-Ansh/exhaust-energy-recovery-3d](https://github.com/Driven-Ansh/exhaust-energy-recovery-3d)
 
 ---
 
-## 🎯 Project Overview & Sketch Fidelity
+## 🎯 Concept & Sketch Fidelity
 
-This project recreates the exact conceptual flow path, component order, and physical arrangement shown in the original hand-drawn engineering reference image:
+Reconstructs the original hand-drawn concept sketch as a clean, photorealistic WebGL CAD machine:
 
-1. **Engine / Combustion Source** (`01`) — Upstream high-temperature combustion exhaust port.
+1. **Engine / Combustion Source** (`01`) — Heavy-duty engine exhaust port.
 2. **Main Exhaust Pipe** (`02`) — Stainless steel ducting transporting hot gas.
-3. **Exhaust / Muffler Chamber** (`03`) — Large elongated oval/cylindrical chamber for pressure accumulation and acoustic dampening.
-4. **High-Velocity Exhaust Nozzle** (`04`) — Convergent throat section accelerating static pressure into high-speed fluid velocity.
-5. **12-Blade Turbine** (`05`) — Concentric radial impulse turbine containing **EXACTLY 12 aerodynamic blades** mounted on the shaft.
+3. **Exhaust / Muffler Chamber** (`03`) — Large elongated oval/cylindrical expansion chamber.
+4. **High-Velocity Exhaust Nozzle** (`04`) — Convergent throat accelerating flow velocity toward the turbine.
+5. **12-Blade Turbine** (`05`) — Concentric radial impulse turbine containing **EXACTLY 12 aerodynamic blades**.
 6. **Common Rotational Shaft** (`06`) — Single central mechanical axis transmitting 1:1 torque from turbine to generator.
-7. **Slanted Exhaust Deflector** (`07`) — Slanted metal sheet angled to redirect post-turbine exhaust gas upward into the exit duct.
-8. **Interactive Bypass Valve** (`08`) — Secondary diversion loop with an animated mechanical valve disc regulating overpressure.
-9. **Electrical Generator G** (`09`) — Industrial permanent magnet synchronous generator coupled to the common shaft.
-10. **Power Electronics** (`10`) — Solid-state inverter module regulating power for battery charging.
-11. **Vehicle Battery Pack** (`11`) — Traction battery pack receiving recovered electrical current.
+7. **Slanted Exhaust Deflector** (`07`) — Slanted metal sheet angled at ~52° to redirect post-turbine exhaust upward.
+8. **Bypass Valve System** (`08`) — Secondary diversion loop with an animated mechanical butterfly valve.
+9. **Electrical Generator G** (`09`) — Industrial permanent magnet generator coupled to the common shaft.
+10. **Power Electronics** (`10`) — Solid-state inverter module for energy conditioning.
+11. **Vehicle Battery Pack** (`11`) — High-voltage battery pack receiving recovered electrical energy.
 12. **Exhaust Outlet** (`12`) — Top exit tailpipe discharging de-energized exhaust gas.
 
 ---
 
-## 🚀 Key Features
+## 🕹️ Interactive Features
 
-* **Real-Time 3D Mechanical Model**: Rendered with WebGL using Three.js and React Three Fiber.
-* **12-Phase Guided Cinematic Simulation**: A self-running presentation sequence featuring automated camera movements, component highlights, dynamic flow acceleration, spinning turbine/shaft/generator, and live narration overlays.
-* **Interactive Component Exploration**: Click any 3D component to isolate it, focus the camera, and open detailed technical specification panels.
-* **Multiple Display Modes**:
-  * **Normal**: Metallic PBR shaders with studio lighting.
-  * **Cutaway**: Semi-transparent shell housing for inspecting internal gas flow, nozzle acceleration, 12 turbine blades, and slanted deflector plate.
+* **Full 360-Degree Camera Controls**: Rotate freely around all axes (360° top, bottom, sides), pan, and zoom in/out to inspect individual turbine blades or shaft details.
+* **Simulate Process**: Single-click automated 12-phase cinematic presentation sequence with camera movements, rotation animations, and step narration.
+* **Component Inspection**: Click any 3D component to highlight it and open its technical specification card.
+* **Visualization Modes**:
+  * **Normal**: Realistic metallic PBR shaders with studio environment lighting.
+  * **Cutaway**: Semi-transparent outer housing for inspecting internal gas flow, nozzle throat, 12 turbine blades, and slanted deflector plate.
   * **Exploded View**: Smoothly separates components along assembly axes.
-  * **Technical Mode**: Engineering blueprint grid, 3D dimension callout lines, axis centerlines, and numbered legend callouts (`01`–`12`).
-  * **Vehicle Context**: Semi-transparent heavy-duty semi-truck chassis overlay showing system placement under the truck frame.
-* **Live Engineering Dashboard**: Calculated real-time metrics (Turbine RPM, Generator Power kW, Battery State of Charge %, Bypass Valve position) with interactive control sliders.
-* **Presentation Mode (`PRESENT`)**: Fullscreen, clean presentation view for large-screen project pitches and hackathon demonstrations.
+  * **Technical Mode**: Engineering blueprint grid, axis centerlines, 3D dimension lines, and numbered callouts (`01`–`12`).
+  * **Vehicle Context**: Semi-transparent heavy-duty semi-truck chassis overlay.
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ Tech Stack
 
-* **Core Framework**: React 19, Vite
-* **3D Graphics Engine**: Three.js, `@react-three/fiber`, `@react-three/drei`
-* **State Management**: `zustand`
-* **Icons & Animation**: `lucide-react`, Framer Motion
-* **Styling**: Tailwind CSS v4, Glassmorphism UI tokens
+* **React 19**, **Vite**
+* **Three.js**, **React Three Fiber**, **Drei**
+* **Zustand** (State Management)
+* **Tailwind CSS v4**
 
 ---
 
-## 💻 Local Development
-
-To run the application locally on your machine:
+## 🚀 Local Setup
 
 ```bash
-# 1. Clone or navigate to the project directory
+git clone https://github.com/Driven-Ansh/exhaust-energy-recovery-3d.git
 cd exhaust-energy-recovery-3d
-
-# 2. Install dependencies
 npm install
-
-# 3. Start local development server
 npm run dev
-
-# 4. Open browser at http://localhost:5173
 ```
-
----
-
-## 🌐 Production Build & Vercel Deployment
-
-The project is fully configured for static deployment to Vercel, Netlify, or GitHub Pages.
-
-```bash
-# Build production bundle
-npm run build
-
-# Output directory: ./dist
-```
-
-To deploy to Vercel CLI directly:
-```bash
-npx vercel
-```
-
----
-
-## ⚙️ How to Modify Dimensions & Simulation Parameters
-
-All mechanical dimensions, radii, lengths, blade counts, and positions are stored centrally in `src/data/dimensions.js`.
-
-```javascript
-// src/data/dimensions.js
-export const SYSTEM_DIMENSIONS = {
-  turbine: {
-    bladeCount: 12, // Parametric blade count
-    hubRadius: 0.45,
-    bladeLength: 1.25,
-    bladePitchAngle: 32,
-  },
-  // ...
-};
-```
-Updating values in `dimensions.js` updates all 3D mesh geometries and technical overlay callouts instantly across the application.
+Open [http://localhost:5173/](http://localhost:5173/) in your browser.
