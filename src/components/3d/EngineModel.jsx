@@ -39,21 +39,40 @@ export function EngineModel() {
       }}
       onPointerOut={() => setHovered(null)}
     >
-      {/* Heavy Engine Block */}
+      {/* Transparent Metallic Grey Engine Enclosure Box */}
       <mesh ref={meshRef} castShadow receiveShadow>
         <boxGeometry args={[width, height, depth]} />
         <meshStandardMaterial
-          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#475569"}
-          metalness={0.85}
-          roughness={0.25}
+          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#cbd5e1"}
+          metalness={0.88}
+          roughness={0.15}
+          transparent={true}
+          opacity={0.38}
           wireframe={isTechnical}
         />
       </mesh>
 
-      {/* Bright Silver Valve Cover Top */}
+      {/* Crisp Wireframe Edge Outline Box for High Contrast */}
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[width + 0.02, height + 0.02, depth + 0.02]} />
+        <meshBasicMaterial
+          color="#94a3b8"
+          wireframe={true}
+          transparent={true}
+          opacity={0.6}
+        />
+      </mesh>
+
+      {/* Semi-Transparent Valve Cover Top */}
       <mesh position={[0, height / 2 + 0.25, 0]} castShadow>
         <boxGeometry args={[width * 0.85, 0.5, depth * 0.85]} />
-        <meshStandardMaterial color="#f8fafc" metalness={0.92} roughness={0.15} />
+        <meshStandardMaterial
+          color="#e2e8f0"
+          metalness={0.9}
+          roughness={0.15}
+          transparent={true}
+          opacity={0.6}
+        />
       </mesh>
 
       {/* Exhaust Header Outlets */}
@@ -64,11 +83,11 @@ export function EngineModel() {
         </mesh>
       ))}
 
-      {/* Internal Combustion Port Glowing Chamber */}
+      {/* Internal Glowing Flame-Orange Combustion Chamber (Visible inside transparent grey box) */}
       <mesh ref={glowRef} position={[-width / 2 + 0.1, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[0.55, 0.55, 0.3, 24]} />
         <meshStandardMaterial
-          color="#ea580c"
+          color="#f97316"
           emissive="#ea580c"
           emissiveIntensity={1.0}
           transparent
