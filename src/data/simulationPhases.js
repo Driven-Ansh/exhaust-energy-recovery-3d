@@ -1,0 +1,148 @@
+// 12-Phase Automated Cinematic Presentation Sequence Definition
+
+export const SIMULATION_PHASES = [
+  {
+    phaseIndex: 1,
+    id: "intro",
+    title: "PHASE 01 — INTRODUCTION",
+    subtitle: "EXHAUST ENERGY RECOVERY SYSTEM",
+    narration:
+      "Welcome to the Heavy-Duty Vehicle Exhaust Energy Recovery System interactive 3D engineering prototype. This concept captures waste heat and kinetic energy from diesel exhaust to generate clean electricity.",
+    highlightComponent: null,
+    cameraPos: [14, 8, 16],
+    cameraTarget: [0, 0, 0],
+    duration: 5.5,
+  },
+  {
+    phaseIndex: 2,
+    id: "engine",
+    title: "PHASE 02 — ENGINE COMBUSTION SOURCE",
+    subtitle: "Waste Thermal & Kinetic Energy Generation",
+    narration:
+      "Combustion inside the heavy-duty diesel engine produces high-temperature exhaust gases (650°C). Instead of allowing this valuable energy to vent unused into the atmosphere, the system directs flow into the recovery loop.",
+    highlightComponent: "engine",
+    cameraPos: [17, 4, 6],
+    cameraTarget: [13.5, 0, 0],
+    duration: 6.0,
+  },
+  {
+    phaseIndex: 3,
+    id: "exhaust_path",
+    title: "PHASE 03 — MAIN EXHAUST PIPE",
+    subtitle: "High-Temperature Fluid Transport",
+    narration:
+      "Exhaust gases travel down the main stainless steel exhaust ducting. Internal flow paths preserve fluid kinetic energy while directing hot pressurized gas toward the expansion chamber.",
+    highlightComponent: "exhaustPipe",
+    cameraPos: [14, 3, 5],
+    cameraTarget: [9.5, 0, 0],
+    duration: 5.0,
+  },
+  {
+    phaseIndex: 4,
+    id: "muffler",
+    title: "PHASE 04 — EXHAUST / MUFFLER CHAMBER",
+    subtitle: "Pressure Stabilization & Accumulation",
+    narration:
+      "The gas enters the large elongated oval chamber drawn in the original reference concept. Here, pulsating exhaust pressure from combustion strokes stabilizes into a continuous high-pressure fluid reservoir.",
+    highlightComponent: "mufflerChamber",
+    cameraPos: [9, 4, 7],
+    cameraTarget: [5.25, 0, 0],
+    duration: 6.0,
+  },
+  {
+    phaseIndex: 5,
+    id: "nozzle",
+    title: "PHASE 05 — HIGH-VELOCITY EXHAUST NOZZLE",
+    subtitle: "Bernoulli Fluid Acceleration",
+    narration:
+      "The exhaust is directed through a smaller restricted nozzle passage. As the cross-sectional area contracts, static pressure converts to high kinetic velocity (over 140 m/s), creating a concentrated high-speed exhaust jet.",
+    highlightComponent: "nozzle",
+    cameraPos: [5, 2.5, 4.5],
+    cameraTarget: [2.5, 0, 0],
+    duration: 6.0,
+  },
+  {
+    phaseIndex: 6,
+    id: "turbine",
+    title: "PHASE 06 — 12-BLADE TURBINE ASSEMBLY",
+    subtitle: "Kinetic Flow to Mechanical Rotation",
+    narration:
+      "The high-velocity jet strikes EXACTLY 12 engineered turbine blades mounted on the central axis. Impulse energy transfer forces the turbine into rapid rotation, converting fluid kinetic energy into shaft torque.",
+    highlightComponent: "turbine",
+    cameraPos: [2.5, 1.8, 3.5],
+    cameraTarget: [0, 0, 0],
+    duration: 7.5,
+  },
+  {
+    phaseIndex: 7,
+    id: "shaft",
+    title: "PHASE 07 — COMMON ROTATIONAL SHAFT",
+    subtitle: "Direct Mechanical Torque Transfer",
+    narration:
+      "The turbine rotation is transferred directly through the common central shaft. Running concentrically down the axis, the shaft locks turbine rotation and generator rotor drive in 1:1 mechanical synchrony.",
+    highlightComponent: "shaft",
+    cameraPos: [-2, 3, 5],
+    cameraTarget: [-3.5, 0, 0],
+    duration: 5.5,
+  },
+  {
+    phaseIndex: 8,
+    id: "generator",
+    title: "PHASE 08 — ELECTRICAL GENERATOR",
+    subtitle: "Mechanical Energy → Electrical Energy",
+    narration:
+      "At the rear end of the common shaft, the spinning rotor inside the electrical generator cuts through magnetic stator windings, inducing high-efficiency 3-phase alternating electrical current.",
+    highlightComponent: "generator",
+    cameraPos: [-9, 3.5, 6],
+    cameraTarget: [-7.2, 0, 0],
+    duration: 6.0,
+  },
+  {
+    phaseIndex: 9,
+    id: "battery",
+    title: "PHASE 09 — VEHICLE BATTERY PACK",
+    subtitle: "Power Conditioning & Energy Storage",
+    narration:
+      "Power electronics condition the generator output and deliver high-voltage direct current into the heavy-vehicle battery pack. Live charging increases battery state of charge, reducing engine alternator load.",
+    highlightComponent: "batteryPack",
+    cameraPos: [-5, -1, 7],
+    cameraTarget: [-3.5, -2.5, 2],
+    duration: 6.0,
+  },
+  {
+    phaseIndex: 10,
+    id: "bypass",
+    title: "PHASE 10 — INTERACTIVE BYPASS VALVE",
+    subtitle: "Overpressure Protection & Flow Modulation",
+    narration:
+      "The bypass valve opens or closes to modulate exhaust flow. During high-load backpressure spikes or engine start-up, exhaust diverts safely around the turbine stage directly to the exit tailpipe.",
+    highlightComponent: "bypassValve",
+    cameraPos: [1, -3.5, 5],
+    cameraTarget: [0, -2, 0],
+    duration: 6.0,
+  },
+  {
+    phaseIndex: 11,
+    id: "exit",
+    title: "PHASE 11 — SLANTED DEFLECTOR & EXIT OUTLET",
+    subtitle: "Deflected Exhaust Discharge Path",
+    narration:
+      "Post-turbine exhaust encounters the slanted metal deflector sheet drawn in the original concept sketch. Gas changes direction according to the sketch geometry and safely discharges out the top exit duct.",
+    highlightComponent: "deflector",
+    cameraPos: [-4.5, 3.5, 4.5],
+    cameraTarget: [-2.8, 1, 0],
+    duration: 6.0,
+  },
+  {
+    phaseIndex: 12,
+    id: "summary",
+    title: "PHASE 12 — COMPLETE RECOVERY LOOP",
+    subtitle: "SIMULATION COMPLETE — Full Energy Loop Active",
+    narration:
+      "Engine combustion → Muffler → Convergent Nozzle → 12-Blade Turbine → Common Shaft → Electrical Generator → Vehicle Battery Storage. Full interactive exploration mode is now unlocked!",
+    highlightComponent: null,
+    cameraPos: [12, 10, 15],
+    cameraTarget: [0, -0.5, 0],
+    duration: 7.0,
+  },
+];
