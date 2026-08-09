@@ -49,21 +49,21 @@ export function GeneratorModel() {
       }}
       onPointerOut={() => setHovered(null)}
     >
-      {/* Heavy Cylindrical Stator Housing */}
+      {/* High-Contrast Industrial Metallic Cobalt Blue Stator Housing */}
       <mesh rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
         <cylinderGeometry args={[radius, radius, length, 48, 1, false]} />
         <meshStandardMaterial
-          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#1e293b"}
+          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#2563eb"}
           metalness={0.88}
-          roughness={0.22}
+          roughness={0.2}
           side={2}
           transparent={viewMode === "cutaway"}
-          opacity={viewMode === "cutaway" ? 0.3 : 0.96}
+          opacity={viewMode === "cutaway" ? 0.35 : 1.0}
           wireframe={isTechnical}
         />
       </mesh>
 
-      {/* Cooling Fins around Stator */}
+      {/* Bright Polished Silver Cooling Fins */}
       {Array.from({ length: statorFins }).map((_, i) => {
         const finAngle = (i * 2 * Math.PI) / statorFins;
         return (
@@ -73,16 +73,16 @@ export function GeneratorModel() {
             position={[0, Math.sin(finAngle) * (radius + 0.08), Math.cos(finAngle) * (radius + 0.08)]}
           >
             <boxGeometry args={[length * 0.9, 0.12, 0.06]} />
-            <meshStandardMaterial color="#0f172a" metalness={0.9} roughness={0.3} />
+            <meshStandardMaterial color="#f8fafc" metalness={0.95} roughness={0.1} />
           </mesh>
         );
       })}
 
-      {/* Internal Rotor Hub & Copper Winding */}
+      {/* Internal Rotor Hub & Glowing Copper Winding */}
       <group ref={rotorRef}>
         <mesh rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[radius * 0.65, radius * 0.65, length * 0.8, 24]} />
-          <meshStandardMaterial color="#b45309" metalness={0.8} roughness={0.3} />
+          <meshStandardMaterial color="#f97316" metalness={0.85} roughness={0.2} />
         </mesh>
       </group>
 
@@ -92,23 +92,21 @@ export function GeneratorModel() {
         <meshBasicMaterial color="#38bdf8" transparent opacity={0.15} />
       </mesh>
 
-      {/* Junction Box */}
+      {/* High-Voltage Junction Box */}
       <mesh position={[0, radius + 0.35, 0]} castShadow>
         <boxGeometry args={[0.9, 0.5, 0.8]} />
-        <meshStandardMaterial color="#d97706" metalness={0.7} roughness={0.3} />
+        <meshStandardMaterial color="#f59e0b" metalness={0.8} roughness={0.2} />
       </mesh>
 
-      {/* 3D Geometric 'G' Emblem on End Cap (Zero Font Network Dependencies) */}
+      {/* Pure White 3D Geometric 'G' Emblem on End Cap matching sketch */}
       <group position={[-length / 2 - 0.05, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
-        {/* Outer Ring of G */}
         <mesh>
           <torusGeometry args={[0.7, 0.12, 16, 32, Math.PI * 1.5]} />
-          <meshStandardMaterial color="#f8fafc" metalness={0.9} roughness={0.2} />
+          <meshStandardMaterial color="#ffffff" metalness={0.95} roughness={0.1} />
         </mesh>
-        {/* Horizontal Bar of G */}
         <mesh position={[0.2, 0, 0]}>
           <boxGeometry args={[0.5, 0.12, 0.12]} />
-          <meshStandardMaterial color="#f8fafc" metalness={0.9} roughness={0.2} />
+          <meshStandardMaterial color="#ffffff" metalness={0.95} roughness={0.1} />
         </mesh>
       </group>
 

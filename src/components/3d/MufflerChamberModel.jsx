@@ -29,13 +29,13 @@ export function MufflerChamberModel() {
       }}
       onPointerOut={() => setHovered(null)}
     >
-      {/* High-Contrast Machined Stainless Steel Muffler Body */}
+      {/* Bright Machined Metallic Silver Muffler Body */}
       <mesh rotation={[0, 0, Math.PI / 2]} scale={[radiusY, 1, radiusZ]} castShadow receiveShadow>
         <cylinderGeometry args={[1, 1, length, 48, 1, false]} />
         <meshStandardMaterial
-          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#cbd5e1"}
-          metalness={0.92}
-          roughness={0.18}
+          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#f1f5f9"}
+          metalness={0.95}
+          roughness={0.12}
           side={2}
           transparent={viewMode === "cutaway"}
           opacity={viewMode === "cutaway" ? 0.35 : 1.0}
@@ -47,16 +47,16 @@ export function MufflerChamberModel() {
       <mesh rotation={[0, 0, Math.PI / 2]} scale={[radiusY * 0.45, 1, radiusZ * 0.45]}>
         <cylinderGeometry args={[1, 1, length * 0.9, 24, 1, true]} />
         <meshStandardMaterial
-          color="#f59e0b"
+          color="#fbbf24"
           metalness={0.9}
-          roughness={0.2}
+          roughness={0.15}
           wireframe
           transparent
-          opacity={viewMode === "cutaway" ? 0.7 : 0.2}
+          opacity={viewMode === "cutaway" ? 0.75 : 0.2}
         />
       </mesh>
 
-      {/* Heavy Anodized Steel Clamp Bands */}
+      {/* Heavy Anodized Cobalt Blue Clamp Bands */}
       {[-length * 0.3, 0, length * 0.3].map((xOffset, i) => (
         <mesh
           key={i}
@@ -66,11 +66,11 @@ export function MufflerChamberModel() {
           castShadow
         >
           <cylinderGeometry args={[1, 1, 0.12, 32]} />
-          <meshStandardMaterial color="#334155" metalness={0.95} roughness={0.15} />
+          <meshStandardMaterial color="#1d4ed8" metalness={0.9} roughness={0.15} />
         </mesh>
       ))}
 
-      {/* Polished End Caps */}
+      {/* Polished Aluminum End Caps */}
       {[-length / 2, length / 2].map((xPos, idx) => (
         <mesh
           key={idx}
@@ -80,7 +80,7 @@ export function MufflerChamberModel() {
           castShadow
         >
           <cylinderGeometry args={[1, 1, 0.15, 36]} />
-          <meshStandardMaterial color="#475569" metalness={0.92} roughness={0.2} />
+          <meshStandardMaterial color="#cbd5e1" metalness={0.92} roughness={0.15} />
         </mesh>
       ))}
 

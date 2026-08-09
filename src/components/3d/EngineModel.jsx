@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Text } from "@react-three/drei";
 import { SYSTEM_DIMENSIONS } from "../../data/dimensions";
 import { useAppStore } from "../../store/useAppStore";
 
@@ -18,13 +17,12 @@ export function EngineModel() {
   const isHovered = hoveredId === "engine";
 
   const { position, width, height, depth } = SYSTEM_DIMENSIONS.engine;
-  const explodedOffset = viewMode === "exploded" ? 4.0 : 0;
-  const currentX = position[0] + explodedOffset;
+  const currentX = position[0] + (viewMode === "exploded" ? 4.0 : 0);
 
   useFrame((state) => {
     if (glowRef.current) {
       const pulse = Math.sin(state.clock.elapsedTime * 4) * 0.3 + 0.7;
-      glowRef.current.material.emissiveIntensity = isSelected ? 2.0 : pulse * 0.8;
+      glowRef.current.material.emissiveIntensity = isSelected ? 2.0 : pulse * 0.9;
     }
   });
 
@@ -45,24 +43,24 @@ export function EngineModel() {
       <mesh ref={meshRef} castShadow receiveShadow>
         <boxGeometry args={[width, height, depth]} />
         <meshStandardMaterial
-          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#1e293b"}
-          metalness={0.8}
-          roughness={0.3}
+          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#475569"}
+          metalness={0.85}
+          roughness={0.25}
           wireframe={isTechnical}
         />
       </mesh>
 
-      {/* Valve Cover Top */}
+      {/* Bright Silver Valve Cover Top */}
       <mesh position={[0, height / 2 + 0.25, 0]} castShadow>
         <boxGeometry args={[width * 0.85, 0.5, depth * 0.85]} />
-        <meshStandardMaterial color="#0f172a" metalness={0.9} roughness={0.2} />
+        <meshStandardMaterial color="#f8fafc" metalness={0.92} roughness={0.15} />
       </mesh>
 
       {/* Exhaust Header Outlets */}
       {[-0.9, -0.3, 0.3, 0.9].map((zOffset, i) => (
         <mesh key={i} position={[-width / 2 - 0.2, 0, zOffset]} rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[0.22, 0.25, 0.5, 16]} />
-          <meshStandardMaterial color="#475569" metalness={0.9} roughness={0.3} />
+          <meshStandardMaterial color="#cbd5e1" metalness={0.92} roughness={0.2} />
         </mesh>
       ))}
 
@@ -89,19 +87,6 @@ export function EngineModel() {
             opacity={0.8}
           />
         </mesh>
-      )}
-
-      {/* Show 3D Label ONLY in Technical Mode */}
-      {isTechnical && (
-        <Text
-          position={[0, height / 2 + 0.9, 0]}
-          fontSize={0.45}
-          color={isSelected ? "#38bdf8" : "#94a3b8"}
-          anchorX="center"
-          anchorY="bottom"
-        >
-          01. ENGINE / COMBUSTION
-        </Text>
       )}
     </group>
   );

@@ -30,13 +30,13 @@ export function NozzleModel() {
       }}
       onPointerOut={() => setHovered(null)}
     >
-      {/* High-Contrast Convergent Cone Nozzle */}
+      {/* Polished Chrome Silver Convergent Cone Nozzle */}
       <mesh rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
         <cylinderGeometry args={[outletRadius, inletRadius, length, 48, 1, false]} />
         <meshStandardMaterial
-          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#94a3b8"}
-          metalness={0.94}
-          roughness={0.15}
+          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#e2e8f0"}
+          metalness={0.96}
+          roughness={0.1}
           side={2}
           transparent={viewMode === "cutaway"}
           opacity={viewMode === "cutaway" ? 0.35 : 1.0}
@@ -44,14 +44,14 @@ export function NozzleModel() {
         />
       </mesh>
 
-      {/* Nozzle Flange Rings */}
+      {/* Anodized Cobalt Blue Flange Rings */}
       <mesh position={[length / 2, 0, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
         <cylinderGeometry args={[inletRadius * 1.08, inletRadius * 1.08, 0.12, 32]} />
-        <meshStandardMaterial color="#334155" metalness={0.95} roughness={0.15} />
+        <meshStandardMaterial color="#1d4ed8" metalness={0.9} roughness={0.15} />
       </mesh>
       <mesh position={[-length / 2, 0, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
         <cylinderGeometry args={[outletRadius * 1.15, outletRadius * 1.15, 0.12, 32]} />
-        <meshStandardMaterial color="#334155" metalness={0.95} roughness={0.15} />
+        <meshStandardMaterial color="#1d4ed8" metalness={0.9} roughness={0.15} />
       </mesh>
 
       {/* Selection outline */}

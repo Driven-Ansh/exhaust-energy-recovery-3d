@@ -1,5 +1,4 @@
 import React from "react";
-import { Text } from "@react-three/drei";
 import { SYSTEM_DIMENSIONS } from "../../data/dimensions";
 import { useAppStore } from "../../store/useAppStore";
 
@@ -17,9 +16,7 @@ export function ExhaustPipeModel() {
   const { startX, endX, radius } = SYSTEM_DIMENSIONS.exhaustPipe;
   const pipeLength = startX - endX;
   const centerX = (startX + endX) / 2;
-
-  const explodedOffset = viewMode === "exploded" ? 3.0 : 0;
-  const currentX = centerX + explodedOffset;
+  const currentX = centerX + (viewMode === "exploded" ? 3.0 : 0);
 
   return (
     <group
@@ -34,13 +31,13 @@ export function ExhaustPipeModel() {
       }}
       onPointerOut={() => setHovered(null)}
     >
-      {/* Stainless Steel Exhaust Pipe Cylinder */}
+      {/* High-Contrast Polished Stainless Steel Exhaust Pipe */}
       <mesh rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
         <cylinderGeometry args={[radius, radius, pipeLength, 32, 1, true]} />
         <meshStandardMaterial
-          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#94a3b8"}
-          metalness={0.92}
-          roughness={0.18}
+          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#f1f5f9"}
+          metalness={0.96}
+          roughness={0.12}
           side={2}
           transparent={viewMode === "cutaway"}
           opacity={viewMode === "cutaway" ? 0.35 : 1.0}
@@ -48,11 +45,11 @@ export function ExhaustPipeModel() {
         />
       </mesh>
 
-      {/* Heavy Flange Couplings at ends */}
+      {/* Flange Couplings */}
       {[-pipeLength / 2, pipeLength / 2].map((xPos, idx) => (
         <mesh key={idx} position={[xPos, 0, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
           <cylinderGeometry args={[radius * 1.25, radius * 1.25, 0.15, 24]} />
-          <meshStandardMaterial color="#334155" metalness={0.95} roughness={0.2} />
+          <meshStandardMaterial color="#1d4ed8" metalness={0.9} roughness={0.15} />
         </mesh>
       ))}
 
@@ -67,19 +64,6 @@ export function ExhaustPipeModel() {
             opacity={0.8}
           />
         </mesh>
-      )}
-
-      {/* Show 3D Label ONLY in Technical Mode */}
-      {isTechnical && (
-        <Text
-          position={[0, radius + 0.7, 0]}
-          fontSize={0.4}
-          color={isSelected ? "#38bdf8" : "#94a3b8"}
-          anchorX="center"
-          anchorY="bottom"
-        >
-          02. EXHAUST PIPE
-        </Text>
       )}
     </group>
   );

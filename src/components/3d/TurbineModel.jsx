@@ -24,7 +24,7 @@ export function TurbineModel() {
   const rotationSpeed = (isSimulating && !isPaused ? 8.0 : isSelected ? 2.0 : 0.5) * simulationSpeed;
 
   useFrame((state, delta) => {
-    if (rotorRef.current && (isSimulating || isSelected || isHovered || true)) {
+    if (rotorRef.current) {
       rotorRef.current.rotation.x += delta * rotationSpeed;
     }
   });
@@ -57,45 +57,45 @@ export function TurbineModel() {
       }}
       onPointerOut={() => setHovered(null)}
     >
-      {/* Outer Protective Turbine Housing Chamber (Semi-transparent in normal view so 12 blades are visible) */}
+      {/* High-Clarity Frosted Housing (Transparent so 12 blades are 100% visible) */}
       <mesh rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
         <cylinderGeometry args={[housingRadius, housingRadius, housingLength, 48, 1, false]} />
         <meshStandardMaterial
-          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#475569"}
-          metalness={0.88}
-          roughness={0.15}
+          color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#e2e8f0"}
+          metalness={0.9}
+          roughness={0.1}
           side={2}
           transparent={true}
-          opacity={viewMode === "cutaway" || isSelected || isHovered ? 0.22 : 0.38}
+          opacity={viewMode === "cutaway" || isSelected || isHovered ? 0.22 : 0.35}
           wireframe={isTechnical}
         />
       </mesh>
 
-      {/* ROTATING TURBINE ASSEMBLY (ROTOR HUB + EXACTLY 12 BLADES) */}
+      {/* ROTATING TURBINE ASSEMBLY (GOLD HUB + 12 ELECTRIC CYAN BLADES) */}
       <group ref={rotorRef}>
-        {/* Central Rotor Hub Disk */}
+        {/* Anodized Gold Hub */}
         <mesh rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
           <cylinderGeometry args={[hubRadius, hubRadius, 0.8, 32]} />
-          <meshStandardMaterial color="#f59e0b" metalness={0.95} roughness={0.12} />
+          <meshStandardMaterial color="#f59e0b" metalness={0.96} roughness={0.1} />
         </mesh>
 
-        {/* Nose Cone Bullet Head on Rotor Hub */}
+        {/* Nose Cone Bullet Head */}
         <mesh position={[0.45, 0, 0]} rotation={[0, 0, -Math.PI / 2]} castShadow>
           <coneGeometry args={[hubRadius, 0.6, 32]} />
-          <meshStandardMaterial color="#fbbf24" metalness={0.92} roughness={0.12} />
+          <meshStandardMaterial color="#fbbf24" metalness={0.95} roughness={0.1} />
         </mesh>
 
-        {/* THE 12 INDIVIDUAL TURBINE BLADES */}
+        {/* THE 12 INDIVIDUAL VIBRANT CYAN TURBINE BLADES */}
         {blades.map((b) => (
           <group key={b.id} position={b.position} rotation={b.rotation}>
             <mesh castShadow receiveShadow>
               <boxGeometry args={[bladeWidth, bladeLength, bladeThickness]} />
               <meshStandardMaterial
-                color="#0284c7"
-                metalness={0.96}
-                roughness={0.1}
-                emissive={isSelected ? "#0284c7" : "#0284c7"}
-                emissiveIntensity={0.2}
+                color="#00f0ff"
+                metalness={0.95}
+                roughness={0.08}
+                emissive="#0284c7"
+                emissiveIntensity={0.4}
               />
             </mesh>
 
