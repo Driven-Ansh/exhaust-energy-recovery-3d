@@ -1,11 +1,13 @@
 import React, { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
 import { SYSTEM_DIMENSIONS } from "../../data/dimensions";
 import { useAppStore } from "../../store/useAppStore";
 
 export function GeneratorModel() {
   const rotorRef = useRef();
-  const auraRef = useRef();
+  const fluxArcRef = useRef();
+  const commutatorRef = useRef();
   const selectedId = useAppStore((state) => state.selectedComponentId);
   const hoveredId = useAppStore((state) => state.hoveredComponentId);
   const setSelected = useAppStore((state) => state.setSelectedComponentId);
@@ -20,19 +22,25 @@ export function GeneratorModel() {
   const isHovered = hoveredId === "generator";
 
   const { position, length, radius, statorFins } = SYSTEM_DIMENSIONS.generator;
-  const explodedOffset = viewMode === "exploded" ? -2.5 : 0;
-  const currentX = position[0] + explodedOffset;
+  const currentX = position[0] + (viewMode === "exploded" ? -2.5 : 0);
 
-  const rotationSpeed = (isSimulating && !isPaused ? 8.0 : isSelected ? 1.5 : 0.3) * simulationSpeed;
+  const rotationSpeed = (isSimulating && !isPaused ? 8.0 : isSelected ? 1.5 : 0.4) * simulationSpeed;
+
+  // 6 Internal Electromagnetic Stator Poles around circumference
+  const statorPoles = Array.from({ length: 6 }, (_, i) => (i * Math.PI) / 3);
 
   useFrame((state, delta) => {
-    if (rotorRef.current && (isSimulating || isSelected || isHovered)) {
+    if (rotorRef.current) {
       rotorRef.current.rotation.x += delta * rotationSpeed;
     }
-    if (auraRef.current) {
-      auraRef.current.material.opacity = isSimulating
-        ? Math.sin(state.clock.elapsedTime * 6) * 0.15 + 0.35
-        : 0.1;
+    if (commutatorRef.current) {
+      commutatorRef.current.rotation.x += delta * rotationSpeed;
+    }
+    if (fluxArcRef.current) {
+      const pulse = isSimulating
+        ? Math.sin(state.clock.elapsedTime * 12) * 0.25 + 0.55
+        : 0.15;
+      fluxArcRef.current.material.opacity = pulse;
     }
   });
 
@@ -49,21 +57,21 @@ export function GeneratorModel() {
       }}
       onPointerOut={() => setHovered(null)}
     >
-      {/* High-Contrast Industrial Metallic Cobalt Blue Stator Housing */}
+      {/* High-Contrast Cobalt Blue Industrial Outer Stator Housing */}
       <mesh rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
         <cylinderGeometry args={[radius, radius, length, 48, 1, false]} />
         <meshStandardMaterial
           color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#2563eb"}
           metalness={0.88}
           roughness={0.2}
-          side={2}
-          transparent={viewMode === "cutaway"}
-          opacity={viewMode === "cutaway" ? 0.35 : 1.0}
+          side={THREE.DoubleSide}
+          transparent={true}
+          opacity={viewMode === "cutaway" || isSelected || isHovered ? 0.35 : 0.88}
           wireframe={isTechnical}
         />
       </mesh>
 
-      {/* Bright Polished Silver Cooling Fins */}
+      {/* Bright Silver Cooling Fins */}
       {Array.from({ length: statorFins }).map((_, i) => {
         const finAngle = (i * 2 * Math.PI) / statorFins;
         return (
@@ -78,21 +86,56 @@ export function GeneratorModel() {
         );
       })}
 
-      {/* Internal Rotor Hub & Glowing Copper Winding */}
+      {/* STATOR MAGNETIC POLE TEETH & COPPER FIELD COILS */}
+      {statorPoles.map((angle, i) => (
+        <group key={i} rotation={[angle, 0, 0]}>
+          {/* Iron Pole Shoe */}
+          <mesh position={[0, radius * 0.72, 0]}>
+            <boxGeometry args={[length * 0.75, 0.25, 0.4]} />
+            <meshStandardMaterial color="#334155" metalness={0.9} roughness={0.2} />
+          </mesh>
+          {/* Copper Field Winding Coil */}
+          <mesh position={[0, radius * 0.82, 0]}>
+            <boxGeometry args={[length * 0.7, 0.18, 0.55]} />
+            <meshStandardMaterial color="#f97316" metalness={0.85} roughness={0.2} />
+          </mesh>
+        </group>
+      ))}
+
+      {/* REALISTIC SPINNING MULTI-POLE ROTOR & ARMATURE ASSEMBLY */}
       <group ref={rotorRef}>
+        {/* Laminated Steel Rotor Core Axis */}
         <mesh rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[radius * 0.65, radius * 0.65, length * 0.8, 24]} />
-          <meshStandardMaterial color="#f97316" metalness={0.85} roughness={0.2} />
+          <cylinderGeometry args={[radius * 0.55, radius * 0.55, length * 0.75, 32]} />
+          <meshStandardMaterial color="#475569" metalness={0.92} roughness={0.15} />
+        </mesh>
+
+        {/* 6 Copper Armature Winding Bundles */}
+        {statorPoles.map((angle, i) => (
+          <group key={i} rotation={[angle, 0, 0]}>
+            <mesh position={[0, radius * 0.42, 0]}>
+              <boxGeometry args={[length * 0.72, 0.15, 0.25]} />
+              <meshStandardMaterial color="#ea580c" metalness={0.88} roughness={0.15} />
+            </mesh>
+          </group>
+        ))}
+      </group>
+
+      {/* Commutator Segment & Carbon Brush Assembly on Shaft */}
+      <group ref={commutatorRef} position={[length / 2 - 0.4, 0, 0]}>
+        <mesh rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[radius * 0.35, radius * 0.35, 0.3, 24]} />
+          <meshStandardMaterial color="#b45309" metalness={0.95} roughness={0.1} />
         </mesh>
       </group>
 
-      {/* Electromagnetic Energy Field Aura */}
-      <mesh ref={auraRef} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[radius + 0.2, radius + 0.2, length + 0.1, 32]} />
-        <meshBasicMaterial color="#38bdf8" transparent opacity={0.15} />
+      {/* DYNAMIC ELECTROMAGNETIC FLUX RING ARCS */}
+      <mesh ref={fluxArcRef} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[radius * 0.65, radius * 0.65, length * 0.7, 32]} />
+        <meshBasicMaterial color="#00f0ff" transparent opacity={0.3} wireframe />
       </mesh>
 
-      {/* High-Voltage Junction Box */}
+      {/* Junction Box */}
       <mesh position={[0, radius + 0.35, 0]} castShadow>
         <boxGeometry args={[0.9, 0.5, 0.8]} />
         <meshStandardMaterial color="#f59e0b" metalness={0.8} roughness={0.2} />

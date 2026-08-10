@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
 import { SYSTEM_DIMENSIONS } from "../../data/dimensions";
 import { useAppStore } from "../../store/useAppStore";
 
@@ -18,10 +19,10 @@ export function TurbineModel() {
   const isSelected = selectedId === "turbine";
   const isHovered = hoveredId === "turbine";
 
-  const { position, bladeCount, hubRadius, bladeLength, bladeWidth, bladeThickness, bladePitchAngle, housingRadius, housingLength } = SYSTEM_DIMENSIONS.turbine;
+  const { position, bladeCount, hubRadius, bladeLength, bladeWidth, bladeThickness, housingRadius, housingLength } = SYSTEM_DIMENSIONS.turbine;
 
   const currentX = position[0];
-  const rotationSpeed = (isSimulating && !isPaused ? 8.0 : isSelected ? 2.0 : 0.5) * simulationSpeed;
+  const rotationSpeed = (isSimulating && !isPaused ? 8.0 : isSelected ? 2.0 : 0.6) * simulationSpeed;
 
   useFrame((state, delta) => {
     if (rotorRef.current) {
@@ -29,18 +30,19 @@ export function TurbineModel() {
     }
   });
 
-  // Generate array of EXACTLY 12 turbine blades spaced evenly at 30-degree increments
-  const blades = Array.from({ length: bladeCount }, (_, index) => {
-    const angle = (index * 2 * Math.PI) / bladeCount; // 360 / 12 = 30 deg
+  // Generate EXACTLY 12 distinct turbine stages spaced sequentially one behind another along the X axis
+  const stageSpacing = (housingLength * 0.85) / bladeCount;
+  const startStageX = (housingLength * 0.85) / 2;
+
+  const turbineStages = Array.from({ length: bladeCount }, (_, stageIndex) => {
+    const xPos = startStageX - stageIndex * stageSpacing;
+    // Each stage has a 2-blade or 4-blade impulse rotor pair pitched aerodynamically
+    const stageAngle = (stageIndex * Math.PI) / 6; // Incremental pitch angle down the shaft
+
     return {
-      id: index + 1,
-      angle,
-      position: [
-        0,
-        Math.cos(angle) * (hubRadius + bladeLength / 2),
-        Math.sin(angle) * (hubRadius + bladeLength / 2),
-      ],
-      rotation: [angle + (bladePitchAngle * Math.PI) / 180, 0, 0],
+      id: stageIndex + 1,
+      xPos,
+      rotationAngle: stageAngle,
     };
   });
 
@@ -57,54 +59,61 @@ export function TurbineModel() {
       }}
       onPointerOut={() => setHovered(null)}
     >
-      {/* High-Clarity Frosted Housing (Transparent so 12 blades are 100% visible) */}
+      {/* High-Clarity Frosted Outer Housing (Transparent so all 12 stages are 100% visible) */}
       <mesh rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
         <cylinderGeometry args={[housingRadius, housingRadius, housingLength, 48, 1, false]} />
         <meshStandardMaterial
           color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#e2e8f0"}
           metalness={0.9}
           roughness={0.1}
-          side={2}
+          side={THREE.DoubleSide}
           transparent={true}
-          opacity={viewMode === "cutaway" || isSelected || isHovered ? 0.22 : 0.35}
+          opacity={viewMode === "cutaway" || isSelected || isHovered ? 0.2 : 0.35}
           wireframe={isTechnical}
         />
       </mesh>
 
-      {/* ROTATING TURBINE ASSEMBLY (GOLD HUB + 12 ELECTRIC CYAN BLADES) */}
+      {/* ROTATING 12-STAGE TURBINE ASSEMBLY (12 BLADES SEQUENTIALLY MOUNTED ONE BEHIND ANOTHER) */}
       <group ref={rotorRef}>
-        {/* Anodized Gold Hub */}
-        <mesh rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
-          <cylinderGeometry args={[hubRadius, hubRadius, 0.8, 32]} />
-          <meshStandardMaterial color="#f59e0b" metalness={0.96} roughness={0.1} />
-        </mesh>
-
-        {/* Nose Cone Bullet Head */}
-        <mesh position={[0.45, 0, 0]} rotation={[0, 0, -Math.PI / 2]} castShadow>
-          <coneGeometry args={[hubRadius, 0.6, 32]} />
-          <meshStandardMaterial color="#fbbf24" metalness={0.95} roughness={0.1} />
-        </mesh>
-
-        {/* THE 12 INDIVIDUAL VIBRANT CYAN TURBINE BLADES */}
-        {blades.map((b) => (
-          <group key={b.id} position={b.position} rotation={b.rotation}>
-            <mesh castShadow receiveShadow>
-              <boxGeometry args={[bladeWidth, bladeLength, bladeThickness]} />
-              <meshStandardMaterial
-                color="#00f0ff"
-                metalness={0.95}
-                roughness={0.08}
-                emissive="#0284c7"
-                emissiveIntensity={0.4}
-              />
+        {turbineStages.map((stage) => (
+          <group key={stage.id} position={[stage.xPos, 0, 0]}>
+            {/* Rotor Hub Disk for Stage */}
+            <mesh rotation={[0, 0, Math.PI / 2]} castShadow>
+              <cylinderGeometry args={[hubRadius * 0.9, hubRadius * 0.9, 0.12, 24]} />
+              <meshStandardMaterial color="#f59e0b" metalness={0.95} roughness={0.1} />
             </mesh>
 
-            <mesh position={[0, bladeLength / 2 + 0.05, 0]}>
-              <boxGeometry args={[bladeWidth * 0.9, 0.1, bladeThickness * 1.2]} />
-              <meshStandardMaterial color="#38bdf8" metalness={0.9} roughness={0.1} />
-            </mesh>
+            {/* Aerodynamic Impulse Turbine Blades for this Stage (Upper & Lower Blades) */}
+            {[0, Math.PI].map((bladeAngle, bIdx) => (
+              <group key={bIdx} rotation={[bladeAngle + stage.rotationAngle, 0, 0]}>
+                <mesh
+                  position={[0, hubRadius + bladeLength / 2, 0]}
+                  rotation={[0.4, 0, 0]}
+                  castShadow
+                >
+                  <boxGeometry args={[bladeWidth * 0.75, bladeLength, bladeThickness * 1.5]} />
+                  <meshStandardMaterial
+                    color="#00f0ff"
+                    metalness={0.96}
+                    roughness={0.08}
+                    emissive="#0284c7"
+                    emissiveIntensity={0.4}
+                  />
+                </mesh>
+                <mesh position={[0, hubRadius + bladeLength, 0]}>
+                  <boxGeometry args={[bladeWidth * 0.8, 0.08, bladeThickness * 1.8]} />
+                  <meshStandardMaterial color="#38bdf8" metalness={0.9} roughness={0.1} />
+                </mesh>
+              </group>
+            ))}
           </group>
         ))}
+
+        {/* Nose Cone Bullet Head on Front Stage */}
+        <mesh position={[startStageX + 0.3, 0, 0]} rotation={[0, 0, -Math.PI / 2]} castShadow>
+          <coneGeometry args={[hubRadius * 0.9, 0.5, 32]} />
+          <meshStandardMaterial color="#fbbf24" metalness={0.95} roughness={0.1} />
+        </mesh>
       </group>
 
       {/* Selection outline */}
