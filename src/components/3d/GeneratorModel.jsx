@@ -24,7 +24,7 @@ export function GeneratorModel() {
   const { position, length, radius, statorFins } = SYSTEM_DIMENSIONS.generator;
   const currentX = position[0] + (viewMode === "exploded" ? -2.5 : 0);
 
-  const rotationSpeed = (isSimulating && !isPaused ? 8.0 : isSelected ? 1.5 : 0.4) * simulationSpeed;
+  const rotationSpeed = (isSimulating && !isPaused ? 8.5 : isSelected ? 2.5 : 0.8) * simulationSpeed;
 
   // 6 Internal Electromagnetic Stator Poles around circumference
   const statorPoles = Array.from({ length: 6 }, (_, i) => (i * Math.PI) / 3);
@@ -38,8 +38,8 @@ export function GeneratorModel() {
     }
     if (fluxArcRef.current) {
       const pulse = isSimulating
-        ? Math.sin(state.clock.elapsedTime * 12) * 0.25 + 0.55
-        : 0.15;
+        ? Math.sin(state.clock.elapsedTime * 14) * 0.25 + 0.65
+        : 0.2;
       fluxArcRef.current.material.opacity = pulse;
     }
   });
@@ -57,16 +57,16 @@ export function GeneratorModel() {
       }}
       onPointerOut={() => setHovered(null)}
     >
-      {/* High-Contrast Cobalt Blue Industrial Outer Stator Housing */}
+      {/* Metallic Cobalt Blue Cutaway Stator Housing matching Reference Image 2 */}
       <mesh rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
         <cylinderGeometry args={[radius, radius, length, 48, 1, false]} />
         <meshStandardMaterial
           color={isSelected ? "#38bdf8" : isHovered ? "#60a5fa" : "#2563eb"}
-          metalness={0.88}
-          roughness={0.2}
+          metalness={0.9}
+          roughness={0.15}
           side={THREE.DoubleSide}
           transparent={true}
-          opacity={viewMode === "cutaway" || isSelected || isHovered ? 0.35 : 0.88}
+          opacity={viewMode === "cutaway" || isSelected || isHovered ? 0.35 : 0.92}
           wireframe={isTechnical}
         />
       </mesh>
@@ -102,7 +102,7 @@ export function GeneratorModel() {
         </group>
       ))}
 
-      {/* REALISTIC SPINNING MULTI-POLE ROTOR & ARMATURE ASSEMBLY */}
+      {/* SPINNING MULTI-POLE ROTOR & ARMATURE ASSEMBLY (MOUNTED ON COMMON SHAFT) */}
       <group ref={rotorRef}>
         {/* Laminated Steel Rotor Core Axis */}
         <mesh rotation={[0, 0, Math.PI / 2]}>
@@ -121,7 +121,7 @@ export function GeneratorModel() {
         ))}
       </group>
 
-      {/* Commutator Segment & Carbon Brush Assembly on Shaft */}
+      {/* Commutator Ring & Carbon Brushes */}
       <group ref={commutatorRef} position={[length / 2 - 0.4, 0, 0]}>
         <mesh rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[radius * 0.35, radius * 0.35, 0.3, 24]} />
@@ -129,10 +129,10 @@ export function GeneratorModel() {
         </mesh>
       </group>
 
-      {/* DYNAMIC ELECTROMAGNETIC FLUX RING ARCS */}
+      {/* DYNAMIC ELECTROMAGNETIC FLUX ARCS PULSING IN GENERATOR */}
       <mesh ref={fluxArcRef} rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[radius * 0.65, radius * 0.65, length * 0.7, 32]} />
-        <meshBasicMaterial color="#00f0ff" transparent opacity={0.3} wireframe />
+        <meshBasicMaterial color="#38bdf8" transparent opacity={0.35} wireframe />
       </mesh>
 
       {/* Junction Box */}
