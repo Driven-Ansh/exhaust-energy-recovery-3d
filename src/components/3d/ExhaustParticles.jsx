@@ -12,32 +12,32 @@ export function ExhaustParticles() {
   const isPaused = useAppStore((state) => state.isPaused);
   const simulationSpeed = useAppStore((state) => state.simulationSpeed);
 
-  const PARTICLE_COUNT = 250;
-  const BYPASS_PARTICLE_COUNT = 80;
+  const PARTICLE_COUNT = 350;
+  const BYPASS_PARTICLE_COUNT = 100;
 
-  // Main flow path keypoints (Engine -> Pipe -> Muffler -> Nozzle -> Turbine -> Deflector -> Outlet)
+  // Extended Main flow path keypoints through all 12 series turbines
   const mainPathCurve = useMemo(() => {
     return new THREE.CatmullRomCurve3([
-      new THREE.Vector3(13.5, 0, 0),
-      new THREE.Vector3(9.5, 0, 0),
-      new THREE.Vector3(5.25, 0, 0),
-      new THREE.Vector3(2.5, 0, 0),
-      new THREE.Vector3(0.0, 0, 0),
-      new THREE.Vector3(-2.8, 0, 0),
-      new THREE.Vector3(-3.0, 1.8, 0),
-      new THREE.Vector3(-3.0, 3.5, 0),
+      new THREE.Vector3(15.5, 0, 0), // Engine
+      new THREE.Vector3(11.25, 0, 0), // Exhaust Pipe
+      new THREE.Vector3(7.25, 0, 0), // Muffler Chamber
+      new THREE.Vector3(4.3, 0, 0), // Nozzle entrance
+      new THREE.Vector3(0.0, 0, 0), // 12 Series Turbines
+      new THREE.Vector3(-4.0, 0, 0), // Deflector plate
+      new THREE.Vector3(-4.2, 1.8, 0), // Outlet turn
+      new THREE.Vector3(-4.2, 3.5, 0), // Exit top
     ]);
   }, []);
 
   // Bypass flow path keypoints
   const bypassPathCurve = useMemo(() => {
     return new THREE.CatmullRomCurve3([
-      new THREE.Vector3(3.8, 0, 0),
-      new THREE.Vector3(3.8, -2.6, 0),
-      new THREE.Vector3(0.0, -2.6, 0),
-      new THREE.Vector3(-3.8, -2.6, 0),
-      new THREE.Vector3(-3.8, 1.8, 0),
-      new THREE.Vector3(-3.0, 3.5, 0),
+      new THREE.Vector3(5.8, 0, 0),
+      new THREE.Vector3(5.8, -2.6, 0),
+      new THREE.Vector3(-0.25, -2.6, 0),
+      new THREE.Vector3(-4.8, -2.6, 0),
+      new THREE.Vector3(-4.8, 1.8, 0),
+      new THREE.Vector3(-4.2, 3.5, 0),
     ]);
   }, []);
 
@@ -99,7 +99,7 @@ export function ExhaustParticles() {
       for (let i = 0; i < PARTICLE_COUNT; i++) {
         let t = offsets[i];
         if (isNaN(t) || t < 0) t = 0;
-        const accel = t > 0.35 && t < 0.6 ? 2.2 : 1.0;
+        const accel = t > 0.35 && t < 0.65 ? 2.2 : 1.0;
         t = (t + delta * speedMult * accel) % 1.0;
         offsets[i] = t;
 
@@ -107,10 +107,10 @@ export function ExhaustParticles() {
         const p = mainPathCurve.getPoint(safeT);
 
         if (p) {
-          const radiusNoise = safeT > 0.4 && safeT < 0.65 ? 0.15 : 0.35;
+          const radiusNoise = safeT > 0.35 && safeT < 0.7 ? 0.18 : 0.35;
           posAttr.array[i * 3] = p.x;
-          posAttr.array[i * 3 + 1] = p.y + Math.sin(safeT * 20 + i) * radiusNoise;
-          posAttr.array[i * 3 + 2] = p.z + Math.cos(safeT * 20 + i) * radiusNoise;
+          posAttr.array[i * 3 + 1] = p.y + Math.sin(safeT * 24 + i) * radiusNoise;
+          posAttr.array[i * 3 + 2] = p.z + Math.cos(safeT * 24 + i) * radiusNoise;
         }
       }
       posAttr.needsUpdate = true;

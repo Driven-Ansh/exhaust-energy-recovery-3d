@@ -63,13 +63,13 @@ export function EnergyFlowLines() {
 
   return (
     <group>
-      {/* Heavy High-Voltage Electric Conduit Tube (Static Cable) */}
+      {/* Heavy High-Voltage Electric Conduit Tube */}
       <mesh>
         <tubeGeometry args={[electricalCableCurve, 64, 0.1, 12, false]} />
         <meshStandardMaterial color="#ea580c" metalness={0.7} roughness={0.3} />
       </mesh>
 
-      {/* Glowing Energy Pulses Traveling down Cable */}
+      {/* Glowing Energy Pulses */}
       <points ref={pulsesRef}>
         <bufferGeometry>
           <bufferAttribute
