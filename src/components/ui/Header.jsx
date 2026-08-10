@@ -1,6 +1,6 @@
 import React from "react";
 import { useAppStore } from "../../store/useAppStore";
-import { Play, Pause, Maximize2, Tag, Layers } from "lucide-react";
+import { Play, Pause, Compass, Truck } from "lucide-react";
 
 export function Header() {
   const isSimulating = useAppStore((state) => state.isSimulating);
@@ -8,32 +8,25 @@ export function Header() {
   const startSimulation = useAppStore((state) => state.startSimulation);
   const pauseSimulation = useAppStore((state) => state.pauseSimulation);
   const resumeSimulation = useAppStore((state) => state.resumeSimulation);
+
   const isTechnicalMode = useAppStore((state) => state.isTechnicalMode);
   const toggleTechnicalMode = useAppStore((state) => state.toggleTechnicalMode);
-  const viewMode = useAppStore((state) => state.viewMode);
-  const setViewMode = useAppStore((state) => state.setViewMode);
-
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(() => {});
-    } else {
-      document.exitFullscreen().catch(() => {});
-    }
-  };
+  const showVehicleContext = useAppStore((state) => state.showVehicleContext);
+  const toggleVehicleContext = useAppStore((state) => state.toggleVehicleContext);
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4 bg-gradient-to-b from-slate-950/80 via-slate-950/40 to-transparent backdrop-blur-md pointer-events-none">
-      {/* Title */}
+    <header className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4 bg-gradient-to-b from-slate-950/80 via-slate-950/30 to-transparent backdrop-blur-md pointer-events-none">
+      {/* App Title */}
       <div className="pointer-events-auto">
         <h1 className="font-sans text-base font-extrabold tracking-wide text-slate-100 uppercase">
           EXHAUST ENERGY RECOVERY SYSTEM
         </h1>
         <p className="text-[11px] font-mono text-slate-400">
-          Interactive Heavy-Duty Vehicle Energy Recovery Concept
+          Interactive 3D Heavy-Duty Vehicle Concept
         </p>
       </div>
 
-      {/* Center SIMULATE PROCESS Button */}
+      {/* SIMULATE PROCESS Button */}
       <div className="pointer-events-auto">
         {!isSimulating ? (
           <button
@@ -54,34 +47,30 @@ export function Header() {
         )}
       </div>
 
-      {/* Right Controls */}
+      {/* Toggles: TECHNICAL MODE & VEHICLE VIEW */}
       <div className="flex items-center gap-2 pointer-events-auto font-mono text-xs">
-        <button
-          onClick={() => setViewMode(viewMode === "cutaway" ? "normal" : "cutaway")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all ${
-            viewMode === "cutaway" ? "bg-cyan-950/80 border-cyan-500/50 text-cyan-300" : "bg-slate-900/80 border-slate-700/60 text-slate-300"
-          }`}
-        >
-          <Layers className="w-3.5 h-3.5" />
-          CUTAWAY
-        </button>
-
         <button
           onClick={toggleTechnicalMode}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all ${
-            isTechnicalMode ? "bg-amber-950/80 border-amber-500/50 text-amber-300" : "bg-slate-900/80 border-slate-700/60 text-slate-300"
+            isTechnicalMode
+              ? "bg-cyan-950/80 border-cyan-500/50 text-cyan-300 shadow-md"
+              : "bg-slate-900/80 border-slate-700/60 text-slate-300 hover:bg-slate-800"
           }`}
         >
-          <Tag className="w-3.5 h-3.5" />
-          LABELS
+          <Compass className="w-3.5 h-3.5 text-cyan-400" />
+          TECHNICAL MODE
         </button>
 
         <button
-          onClick={toggleFullscreen}
-          className="p-2 rounded-xl bg-slate-900/80 border border-slate-700/60 hover:bg-slate-800 text-slate-300 transition-all"
-          title="Toggle Fullscreen"
+          onClick={toggleVehicleContext}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all ${
+            showVehicleContext
+              ? "bg-indigo-950/80 border-indigo-500/50 text-indigo-300 shadow-md"
+              : "bg-slate-900/80 border-slate-700/60 text-slate-300 hover:bg-slate-800"
+          }`}
         >
-          <Maximize2 className="w-4 h-4" />
+          <Truck className="w-3.5 h-3.5 text-indigo-400" />
+          VEHICLE VIEW
         </button>
       </div>
     </header>
