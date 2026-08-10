@@ -6,25 +6,25 @@ export const useAppStore = create((set, get) => ({
   viewMode: "cutaway", // "normal", "cutaway", "exploded"
   isFlowVisible: true,
   isEnergyFlowVisible: true,
-  isTechnicalMode: true,
+  isTechnicalMode: false, // Default to false for clean uncluttered 3D view
   showVehicleContext: false,
   presetView: "isometric",
   isPresentationMode: false,
 
   // Interactive Component Selection
-  selectedComponentId: null, // "engine", "cylinder_1", "turbine_t1", etc.
+  selectedComponentId: null,
   hoveredComponentId: null,
 
-  // Simulation Parameters & Engine Load Controls
+  // Simulation Parameters
   isSimulating: false,
   isPaused: false,
   currentPhaseIndex: 1,
-  simulationSpeed: 1.0, // 0.5x, 1x, 2x
-  engineLoad: 75, // 0 to 100% simulated engine load
+  simulationSpeed: 1.0,
+  engineLoad: 75,
 
   // Dynamic Simulated Metrics
-  batteryCharge: 68, // %
-  exhaustFlowRate: 8.75, // kg/s
+  batteryCharge: 68,
+  exhaustFlowRate: 8.75,
   turbineRPM: 12450,
   shaftRPM: 12450,
   generatorKW: 24.8,
@@ -42,21 +42,9 @@ export const useAppStore = create((set, get) => ({
   setSelectedComponentId: (id) => set({ selectedComponentId: id }),
   setHoveredComponentId: (id) => set({ hoveredComponentId: id }),
 
-  setEngineLoad: (load) => {
-    const clamped = Math.max(10, Math.min(100, load));
-    const factor = clamped / 100;
-    set({
-      engineLoad: clamped,
-      exhaustFlowRate: parseFloat((5.0 + factor * 6.5).toFixed(2)),
-      turbineRPM: Math.round(6000 + factor * 11000),
-      shaftRPM: Math.round(6000 + factor * 11000),
-      generatorKW: parseFloat((10.0 + factor * 22.0).toFixed(1)),
-    });
-  },
-
   setSimulationSpeed: (speed) => set({ simulationSpeed: speed }),
 
-  // Simulation Sequence Actions
+  // Simulation Actions
   startSimulation: () => set({ isSimulating: true, isPaused: false, currentPhaseIndex: 1 }),
   stopSimulation: () => set({ isSimulating: false, isPaused: false, currentPhaseIndex: 1 }),
   pauseSimulation: () => set({ isPaused: true }),

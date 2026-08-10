@@ -2,32 +2,24 @@ import React from "react";
 import { Canvas } from "@react-three/fiber";
 import { MainScene } from "./components/3d/MainScene";
 import { Header } from "./components/ui/Header";
-import { EnergyFlowLegend } from "./components/ui/EnergyFlowLegend";
 import { Toolbar } from "./components/ui/Toolbar";
 import { ComponentCard } from "./components/ui/ComponentCard";
 import { LiveDashboard } from "./components/ui/LiveDashboard";
-import { FooterBar } from "./components/ui/FooterBar";
 
 export default function App() {
   return (
     <div className="relative w-screen h-screen bg-slate-950 overflow-hidden select-none font-sans">
-      {/* Top Navigation Bar & Phase Breadcrumbs */}
+      {/* Sleek Minimal Header */}
       <Header />
 
-      {/* Top-Right Energy Flow Legend */}
-      <EnergyFlowLegend />
-
-      {/* Left Control Sidebar & Components List */}
+      {/* Floating Render Mode & Preset Camera Pill */}
       <Toolbar />
 
       {/* Right Component Info & Specs Overlay Card */}
       <ComponentCard />
 
-      {/* Bottom Telemetry & Simulation Control Panels */}
+      {/* Floating Simulation Phase Narration Banner */}
       <LiveDashboard />
-
-      {/* Bottom Footer Interaction Bar */}
-      <FooterBar />
 
       {/* Main 3D WebGL Canvas */}
       <Canvas
