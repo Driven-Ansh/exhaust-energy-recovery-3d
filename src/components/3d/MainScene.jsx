@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { OrbitControls, ContactShadows } from "@react-three/drei";
+import { Baseplate } from "./Baseplate";
 import { EngineModel } from "./EngineModel";
 import { ExhaustPipeModel } from "./ExhaustPipeModel";
 import { MufflerChamberModel } from "./MufflerChamberModel";
@@ -26,7 +27,7 @@ export function MainScene() {
 
   return (
     <>
-      {/* 100% Unrestricted 360-Degree Orbit Controls */}
+      {/* Unrestricted 360 Orbit Controls */}
       <OrbitControls
         ref={controlsRef}
         makeDefault
@@ -35,7 +36,7 @@ export function MainScene() {
         minDistance={0.5}
         maxDistance={120}
         minPolarAngle={0}
-        maxPolarAngle={Math.PI} // Full 360-degree vertical and horizontal freedom
+        maxPolarAngle={Math.PI}
         rotateSpeed={0.9}
         zoomSpeed={1.2}
         panSpeed={0.9}
@@ -44,37 +45,37 @@ export function MainScene() {
         enableRotate={true}
       />
 
-      {/* Smooth Interpolation Controller for presets & simulation */}
       <CameraController controlsRef={controlsRef} />
 
-      {/* Studio Lighting System for High Contrast & Realism */}
-      <hemisphereLight skyColor="#38bdf8" groundColor="#0f172a" intensity={0.9} />
-      <ambientLight intensity={isTechnical ? 0.5 : 0.8} />
+      {/* Cinematic Studio Lighting System matching Reference Image */}
+      <hemisphereLight skyColor="#38bdf8" groundColor="#020617" intensity={0.9} />
+      <ambientLight intensity={isTechnical ? 0.6 : 0.85} />
 
       {/* Main Directional Key Light */}
       <directionalLight
         position={[25, 30, 25]}
-        intensity={2.2}
+        intensity={2.4}
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-bias={-0.0001}
       />
 
       {/* Opposite Fill Light */}
-      <directionalLight position={[-25, -15, -20]} intensity={1.2} color="#94a3b8" />
+      <directionalLight position={[-25, -15, -20]} intensity={1.4} color="#94a3b8" />
 
-      {/* Back Rim Light for Outline Separation */}
-      <directionalLight position={[0, 20, -25]} intensity={1.5} color="#38bdf8" />
+      {/* Back Rim Light */}
+      <directionalLight position={[0, 20, -25]} intensity={1.8} color="#38bdf8" />
 
       {/* Accent Point Lights */}
-      <pointLight position={[0, 4, 4]} intensity={2.0} color="#38bdf8" />
-      <pointLight position={[-7.2, 4, 3]} intensity={1.8} color="#f59e0b" />
-      <pointLight position={[5.25, 4, 3]} intensity={1.5} color="#cbd5e1" />
+      <pointLight position={[15.5, 3, 2]} intensity={2.5} color="#ea580c" />
+      <pointLight position={[-0.25, 3, 2]} intensity={2.2} color="#00f0ff" />
+      <pointLight position={[-8.5, 3, 2]} intensity={2.0} color="#2563eb" />
+      <pointLight position={[-3.5, -2, 2.5]} intensity={2.0} color="#22c55e" />
 
-      {/* Soft Ground Contact Shadow */}
+      {/* Ground Contact Shadow */}
       <ContactShadows
-        position={[0, -4.5, 0]}
-        opacity={0.7}
+        position={[1.5, -2.6, 0]}
+        opacity={0.8}
         scale={60}
         blur={2.0}
         far={15}
@@ -83,7 +84,7 @@ export function MainScene() {
 
       {/* Background Deselect Click Handler */}
       <group onClick={() => setSelected(null)}>
-        {/* Core 12 Component Models */}
+        <Baseplate />
         <EngineModel />
         <ExhaustPipeModel />
         <MufflerChamberModel />
@@ -97,7 +98,6 @@ export function MainScene() {
         <BatteryModel />
         <ExhaustOutletModel />
 
-        {/* Visualizers */}
         <ExhaustParticles />
         <EnergyFlowLines />
         <VehicleChassis />
