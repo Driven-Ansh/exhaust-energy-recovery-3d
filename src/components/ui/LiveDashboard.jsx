@@ -1,159 +1,107 @@
-import React, { useState } from "react";
-import { Gauge, Sliders, Battery, Activity, Flame, ChevronRight, ChevronLeft } from "lucide-react";
+import React from "react";
 import { useAppStore } from "../../store/useAppStore";
+import { Activity, Gauge, Zap, Flame, Cpu, ShieldCheck } from "lucide-react";
 
 export function LiveDashboard() {
-  const [isOpen, setIsOpen] = useState(true);
-
-  const flowRate = useAppStore((state) => state.flowRate);
   const engineLoad = useAppStore((state) => state.engineLoad);
-  const bypassPosition = useAppStore((state) => state.bypassPosition);
-  const generatorLoad = useAppStore((state) => state.generatorLoad);
-  const batteryCharge = useAppStore((state) => state.batteryChargePercent);
+  const setEngineLoad = useAppStore((state) => state.setEngineLoad);
+  const exhaustFlowRate = useAppStore((state) => state.exhaustFlowRate);
+  const turbineRPM = useAppStore((state) => state.turbineRPM);
+  const shaftRPM = useAppStore((state) => state.shaftRPM);
+  const generatorKW = useAppStore((state) => state.generatorKW);
+  const batteryCharge = useAppStore((state) => state.batteryCharge);
+  const bypassOpenPercent = useAppStore((state) => state.bypassOpenPercent);
   const isSimulating = useAppStore((state) => state.isSimulating);
-  const setSlider = useAppStore((state) => state.setSlider);
+  const isPresentationMode = useAppStore((state) => state.isPresentationMode);
 
-  // Dynamic calculated metrics based on current sliders
-  const effectiveFlowFactor = (flowRate / 100) * (1 - bypassPosition / 100);
-  const turbineRPM = Math.round(effectiveFlowFactor * 18500 * (engineLoad / 100));
-  const shaftRPM = turbineRPM;
-  const generatorOutputkW = ((shaftRPM / 18500) * 18.5 * (generatorLoad / 100)).toFixed(1);
-  const systemStatus = bypassPosition > 80 ? "BYPASS ACTIVE" : isSimulating || flowRate > 20 ? "ACTIVE RECOVERY" : "STANDBY";
+  if (isPresentationMode) return null;
 
   return (
-    <div
-      className={`absolute bottom-6 right-6 z-20 transition-all duration-300 ${
-        isOpen ? "w-80" : "w-12"
-      }`}
-    >
-      {/* Toggle Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="absolute -left-3 top-4 z-30 p-1.5 rounded-full bg-slate-800 text-cyan-400 border border-slate-700 shadow-lg hover:bg-slate-700 transition-all"
-        title={isOpen ? "Collapse Dashboard" : "Expand Live Engineering Dashboard"}
-      >
-        {isOpen ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-      </button>
+    <div className="absolute bottom-4 left-4 z-20 w-80 rounded-2xl bg-slate-900/90 border border-slate-700/60 p-4 shadow-2xl backdrop-blur-xl pointer-events-auto">
+      {/* Top Banner */}
+      <div className="flex items-center justify-between border-b border-slate-700/60 pb-2.5 mb-3">
+        <div className="flex items-center gap-2">
+          <Activity className="w-4 h-4 text-cyan-400 animate-pulse" />
+          <span className="font-mono text-xs font-bold tracking-wider text-slate-100 uppercase">
+            LIVE SIMULATION DASHBOARD
+          </span>
+        </div>
+        <span className="px-2 py-0.5 rounded bg-cyan-950 border border-cyan-500/40 text-[9px] font-mono font-bold text-cyan-400">
+          SIMULATED VALUES
+        </span>
+      </div>
 
-      {isOpen && (
-        <div className="p-4 rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-slate-800 text-white shadow-2xl flex flex-col gap-3">
-          {/* Title & Status */}
-          <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-            <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-cyan-400 animate-pulse" />
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200">
-                LIVE METRICS (SIMULATED)
-              </h3>
-            </div>
-            <span
-              className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
-                systemStatus === "ACTIVE RECOVERY"
-                  ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40"
-                  : systemStatus === "BYPASS ACTIVE"
-                  ? "bg-amber-500/20 text-amber-400 border-amber-500/40"
-                  : "bg-slate-800 text-slate-400 border-slate-700"
-              }`}
-            >
-              {systemStatus}
-            </span>
+      {/* Simulated Engine Load Control Slider */}
+      <div className="mb-3.5 bg-slate-950/70 p-2.5 rounded-xl border border-slate-800">
+        <div className="flex items-center justify-between text-xs mb-1.5">
+          <span className="text-slate-300 font-mono flex items-center gap-1.5">
+            <Flame className="w-3.5 h-3.5 text-orange-400" />
+            SIMULATED ENGINE LOAD
+          </span>
+          <span className="font-mono font-bold text-orange-400">{engineLoad}%</span>
+        </div>
+        <input
+          type="range"
+          min="10"
+          max="100"
+          step="5"
+          value={engineLoad}
+          onChange={(e) => setEngineLoad(Number(e.target.value))}
+          className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+        />
+      </div>
+
+      {/* Real-time Telemetry Metrics Grid */}
+      <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+        {/* Exhaust Flow */}
+        <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-800">
+          <div className="text-[10px] text-slate-400 flex items-center gap-1">
+            <Gauge className="w-3 h-3 text-cyan-400" /> FLOW RATE
           </div>
-
-          {/* Key Metrics Grid */}
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block">
-                TURBINE RPM
-              </span>
-              <span className="text-base font-bold font-mono text-cyan-400">
-                {turbineRPM.toLocaleString()} <span className="text-[10px] text-slate-400 font-normal">RPM</span>
-              </span>
-            </div>
-
-            <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block">
-                GENERATOR POWER
-              </span>
-              <span className="text-base font-bold font-mono text-amber-400">
-                {generatorOutputkW} <span className="text-[10px] text-slate-400 font-normal">kW</span>
-              </span>
-            </div>
-
-            <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block">
-                BATTERY SOC
-              </span>
-              <span className="text-base font-bold font-mono text-emerald-400">
-                {batteryCharge}%
-              </span>
-            </div>
-
-            <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block">
-                BYPASS VALVE
-              </span>
-              <span className="text-base font-bold font-mono text-red-400">
-                {bypassPosition}%
-              </span>
-            </div>
-          </div>
-
-          {/* Interactive Sliders Section */}
-          <div className="pt-2 border-t border-slate-800 flex flex-col gap-2.5 text-xs">
-            <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-              <Sliders className="w-3.5 h-3.5 text-cyan-400" />
-              <span>SIMULATION CONTROL SLIDERS</span>
-            </div>
-
-            {/* Exhaust Flow Slider */}
-            <div>
-              <div className="flex justify-between text-[11px] text-slate-300 font-medium mb-1">
-                <span>Exhaust Flow Rate</span>
-                <span className="font-mono text-cyan-400">{flowRate}%</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={flowRate}
-                onChange={(e) => setSlider("flowRate", Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
-              />
-            </div>
-
-            {/* Engine Load Slider */}
-            <div>
-              <div className="flex justify-between text-[11px] text-slate-300 font-medium mb-1">
-                <span>Engine Load</span>
-                <span className="font-mono text-cyan-400">{engineLoad}%</span>
-              </div>
-              <input
-                type="range"
-                min="10"
-                max="100"
-                value={engineLoad}
-                onChange={(e) => setSlider("engineLoad", Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
-              />
-            </div>
-
-            {/* Bypass Valve Position Slider */}
-            <div>
-              <div className="flex justify-between text-[11px] text-slate-300 font-medium mb-1">
-                <span>Bypass Valve Position</span>
-                <span className="font-mono text-red-400">{bypassPosition}%</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={bypassPosition}
-                onChange={(e) => setSlider("bypassPosition", Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-red-400"
-              />
-            </div>
+          <div className="text-sm font-bold text-cyan-300 mt-0.5">
+            {exhaustFlowRate} <span className="text-[10px] text-slate-400 font-normal">kg/s</span>
           </div>
         </div>
-      )}
+
+        {/* Turbine RPM */}
+        <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-800">
+          <div className="text-[10px] text-slate-400 flex items-center gap-1">
+            <Cpu className="w-3 h-3 text-cyan-400" /> TURBINE (T1-T12)
+          </div>
+          <div className="text-sm font-bold text-cyan-300 mt-0.5">
+            {turbineRPM.toLocaleString()} <span className="text-[10px] text-slate-400 font-normal">RPM</span>
+          </div>
+        </div>
+
+        {/* Generator kW */}
+        <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-800">
+          <div className="text-[10px] text-slate-400 flex items-center gap-1">
+            <Zap className="w-3 h-3 text-yellow-400" /> GEN OUTPUT
+          </div>
+          <div className="text-sm font-bold text-yellow-300 mt-0.5">
+            {generatorKW} <span className="text-[10px] text-slate-400 font-normal">kW</span>
+          </div>
+        </div>
+
+        {/* Battery SOC % */}
+        <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-800">
+          <div className="text-[10px] text-slate-400 flex items-center gap-1">
+            <ShieldCheck className="w-3 h-3 text-emerald-400" /> BATTERY SOC
+          </div>
+          <div className="text-sm font-bold text-emerald-400 mt-0.5 flex items-center justify-between">
+            <span>{batteryCharge}%</span>
+            {isSimulating && (
+              <span className="text-[9px] text-emerald-400 animate-pulse font-normal">⚡ CHARGING</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Bypass Status Indicator */}
+      <div className="mt-2.5 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] font-mono text-slate-400">
+        <span>BYPASS VALVE: <strong className="text-slate-200">{bypassOpenPercent > 0 ? `OPEN (${bypassOpenPercent}%)` : "CLOSED (0%)"}</strong></span>
+        <span>SYSTEM: <strong className="text-emerald-400">OPTIMAL</strong></span>
+      </div>
     </div>
   );
 }

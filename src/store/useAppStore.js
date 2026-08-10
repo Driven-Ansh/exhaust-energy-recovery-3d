@@ -1,121 +1,88 @@
 import { create } from "zustand";
+import { SIMULATION_PHASES } from "../data/simulationPhases";
 
 export const useAppStore = create((set, get) => ({
-  // Active Selected / Hovered Components
-  selectedComponentId: null,
-  hoveredComponentId: null,
-
-  // Visual Display Modes
-  viewMode: "normal", // 'normal' | 'cutaway' | 'exploded'
+  // View & Mode State
+  viewMode: "cutaway", // "normal", "cutaway", "exploded"
   isFlowVisible: true,
   isEnergyFlowVisible: true,
-  isTechnicalMode: false,
-  isVehicleContextVisible: false,
-  presetView: "isometric", // 'isometric' | 'front' | 'side' | 'top' | null
+  isTechnicalMode: true,
+  showVehicleContext: false,
+  presetView: "isometric",
+  isPresentationMode: false,
 
-  // Presentation & Modals
-  isPresenting: false,
-  isFullscreen: false,
-  isDimensionsModalOpen: false,
+  // Interactive Component Selection
+  selectedComponentId: null, // "engine", "cylinder_1", "turbine_t1", etc.
+  hoveredComponentId: null,
 
-  // Simulation Controls & State
+  // Simulation Parameters & Engine Load Controls
   isSimulating: false,
   isPaused: false,
-  currentPhaseIndex: 1, // 1 to 12
-  simulationSpeed: 1.0, // 0.5 | 1.0 | 2.0
-  simProgress: 0, // 0 to 100
-  batteryChargePercent: 64, // % battery state of charge
+  currentPhaseIndex: 1,
+  simulationSpeed: 1.0, // 0.5x, 1x, 2x
+  engineLoad: 75, // 0 to 100% simulated engine load
 
-  // Actions
+  // Dynamic Simulated Metrics
+  batteryCharge: 68, // %
+  exhaustFlowRate: 8.75, // kg/s
+  turbineRPM: 12450,
+  shaftRPM: 12450,
+  generatorKW: 24.8,
+  bypassOpenPercent: 0,
+
+  // Setters
+  setViewMode: (mode) => set({ viewMode: mode }),
+  toggleFlowVisible: () => set((state) => ({ isFlowVisible: !state.isFlowVisible })),
+  toggleEnergyFlowVisible: () => set((state) => ({ isEnergyFlowVisible: !state.isEnergyFlowVisible })),
+  toggleTechnicalMode: () => set((state) => ({ isTechnicalMode: !state.isTechnicalMode })),
+  toggleVehicleContext: () => set((state) => ({ showVehicleContext: !state.showVehicleContext })),
+  setPresetView: (view) => set({ presetView: view }),
+  setPresentationMode: (val) => set({ isPresentationMode: val }),
+
   setSelectedComponentId: (id) => set({ selectedComponentId: id }),
   setHoveredComponentId: (id) => set({ hoveredComponentId: id }),
 
-  setViewMode: (mode) => set({ viewMode: mode }),
-  setFlowVisible: (visible) =>
-    set((state) => ({
-      isFlowVisible:
-        typeof visible === "boolean" ? visible : !state.isFlowVisible,
-    })),
-  setEnergyFlowVisible: (visible) =>
-    set((state) => ({
-      isEnergyFlowVisible:
-        typeof visible === "boolean" ? visible : !state.isEnergyFlowVisible,
-    })),
-  setTechnicalMode: (visible) =>
-    set((state) => ({
-      isTechnicalMode:
-        typeof visible === "boolean" ? visible : !state.isTechnicalMode,
-    })),
-  setVehicleContextVisible: (visible) =>
-    set((state) => ({
-      isVehicleContextVisible:
-        typeof visible === "boolean"
-          ? visible
-          : !state.isVehicleContextVisible,
-    })),
-
-  setPresetView: (view) => set({ presetView: view }),
-
-  // Simulation controls
-  startSimulation: () =>
+  setEngineLoad: (load) => {
+    const clamped = Math.max(10, Math.min(100, load));
+    const factor = clamped / 100;
     set({
-      isSimulating: true,
-      isPaused: false,
-      currentPhaseIndex: 1,
-      simProgress: 0,
-    }),
-  pauseSimulation: () => set({ isPaused: true }),
-  resumeSimulation: () => set({ isPaused: false }),
-  stopSimulation: () => set({ isSimulating: false, isPaused: false }),
-  restartSimulation: () =>
-    set({
-      isSimulating: true,
-      isPaused: false,
-      currentPhaseIndex: 1,
-      simProgress: 0,
-    }),
-
-  nextPhase: () =>
-    set((state) => {
-      const next = state.currentPhaseIndex + 1;
-      if (next > 12) {
-        return { isSimulating: false, currentPhaseIndex: 12 };
-      }
-      return { currentPhaseIndex: next };
-    }),
-
-  prevPhase: () =>
-    set((state) => {
-      const prev = Math.max(1, state.currentPhaseIndex - 1);
-      return { currentPhaseIndex: prev };
-    }),
-
-  setPhaseIndex: (idx) =>
-    set({ currentPhaseIndex: Math.min(12, Math.max(1, idx)) }),
+      engineLoad: clamped,
+      exhaustFlowRate: parseFloat((5.0 + factor * 6.5).toFixed(2)),
+      turbineRPM: Math.round(6000 + factor * 11000),
+      shaftRPM: Math.round(6000 + factor * 11000),
+      generatorKW: parseFloat((10.0 + factor * 22.0).toFixed(1)),
+    });
+  },
 
   setSimulationSpeed: (speed) => set({ simulationSpeed: speed }),
-  setSimProgress: (progress) => set({ simProgress: progress }),
 
-  setBatteryChargePercent: (val) =>
-    set((state) => ({
-      batteryChargePercent:
-        typeof val === "function" ? val(state.batteryChargePercent) : val,
-    })),
+  // Simulation Sequence Actions
+  startSimulation: () => set({ isSimulating: true, isPaused: false, currentPhaseIndex: 1 }),
+  stopSimulation: () => set({ isSimulating: false, isPaused: false, currentPhaseIndex: 1 }),
+  pauseSimulation: () => set({ isPaused: true }),
+  resumeSimulation: () => set({ isPaused: false }),
 
-  // Modals & Modes
-  setDimensionsModalOpen: (open) =>
-    set((state) => ({
-      isDimensionsModalOpen:
-        typeof open === "boolean" ? open : !state.isDimensionsModalOpen,
-    })),
+  nextPhase: () => {
+    const { currentPhaseIndex } = get();
+    if (currentPhaseIndex < SIMULATION_PHASES.length) {
+      set({ currentPhaseIndex: currentPhaseIndex + 1 });
+    } else {
+      set({ isSimulating: false, currentPhaseIndex: 1 });
+    }
+  },
 
-  setPresenting: (presenting) =>
-    set((state) => ({
-      isPresenting:
-        typeof presenting === "boolean"
-          ? presenting
-          : !state.isPresenting,
-    })),
+  prevPhase: () => {
+    const { currentPhaseIndex } = get();
+    if (currentPhaseIndex > 1) {
+      set({ currentPhaseIndex: currentPhaseIndex - 1 });
+    }
+  },
 
-  setFullscreen: (fullscreen) => set({ isFullscreen: fullscreen }),
+  jumpToPhase: (phaseIdx) => set({ currentPhaseIndex: phaseIdx, isSimulating: true, isPaused: false }),
+
+  incrementBatteryCharge: (delta) => set((state) => ({
+    batteryCharge: Math.min(100, parseFloat((state.batteryCharge + delta).toFixed(1))),
+  })),
+
+  setBypassOpenPercent: (val) => set({ bypassOpenPercent: val }),
 }));

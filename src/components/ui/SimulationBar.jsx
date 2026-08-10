@@ -1,204 +1,114 @@
 import React, { useEffect } from "react";
-import {
-  Play,
-  Pause,
-  RotateCcw,
-  SkipForward,
-  SkipBack,
-  FastForward,
-  Zap,
-} from "lucide-react";
-import { SIMULATION_PHASES } from "../../data/simulationPhases";
 import { useAppStore } from "../../store/useAppStore";
+import { SIMULATION_PHASES } from "../../data/simulationPhases";
+import { Play, Pause, SkipForward, RotateCcw, FastForward } from "lucide-react";
 
 export function SimulationBar() {
   const isSimulating = useAppStore((state) => state.isSimulating);
   const isPaused = useAppStore((state) => state.isPaused);
   const currentPhaseIndex = useAppStore((state) => state.currentPhaseIndex);
-  const simulationSpeed = useAppStore((state) => state.simulationSpeed);
-  const simProgress = useAppStore((state) => state.simProgress);
-
-  const pauseSimulation = useAppStore((state) => state.pauseSimulation);
-  const resumeSimulation = useAppStore((state) => state.resumeSimulation);
-  const restartSimulation = useAppStore((state) => state.restartSimulation);
-  const stopSimulation = useAppStore((state) => state.stopSimulation);
   const nextPhase = useAppStore((state) => state.nextPhase);
   const prevPhase = useAppStore((state) => state.prevPhase);
-  const setPhaseIndex = useAppStore((state) => state.setPhaseIndex);
+  const pauseSimulation = useAppStore((state) => state.pauseSimulation);
+  const resumeSimulation = useAppStore((state) => state.resumeSimulation);
+  const startSimulation = useAppStore((state) => state.startSimulation);
+  const stopSimulation = useAppStore((state) => state.stopSimulation);
+  const jumpToPhase = useAppStore((state) => state.jumpToPhase);
+  const isPresentationMode = useAppStore((state) => state.isPresentationMode);
+  const simulationSpeed = useAppStore((state) => state.simulationSpeed);
   const setSimulationSpeed = useAppStore((state) => state.setSimulationSpeed);
-  const setSimProgress = useAppStore((state) => state.setSimProgress);
-  const setSelectedComponentId = useAppStore((state) => state.setSelectedComponentId);
-  const setBatteryChargePercent = useAppStore((state) => state.setBatteryChargePercent);
+  const incrementBatteryCharge = useAppStore((state) => state.incrementBatteryCharge);
 
   const currentPhase = SIMULATION_PHASES.find((p) => p.phaseIndex === currentPhaseIndex) || SIMULATION_PHASES[0];
 
-  // Auto-advance simulation timer & update phase highlights
+  // Automatic phase progression timer during active simulation
   useEffect(() => {
     if (!isSimulating || isPaused) return;
 
-    // Highlight active phase component
-    if (currentPhase.highlightComponent) {
-      setSelectedComponentId(currentPhase.highlightComponent);
+    // Increment battery SOC during battery phase
+    if (currentPhase.id === "battery_charging") {
+      incrementBatteryCharge(0.4);
     }
 
-    // Battery charge increment during battery phase
-    let batteryInterval = null;
-    if (currentPhase.id === "battery") {
-      batteryInterval = setInterval(() => {
-        setBatteryChargePercent((prev) => Math.min(100, prev + 1));
-      }, 200 / simulationSpeed);
-    }
+    const durationMs = (currentPhase.duration * 1000) / simulationSpeed;
+    const timer = setTimeout(() => {
+      nextPhase();
+    }, durationMs);
 
-    const stepMs = 50;
-    const totalMs = (currentPhase.duration * 1000) / simulationSpeed;
-    let elapsed = 0;
+    return () => clearTimeout(timer);
+  }, [isSimulating, isPaused, currentPhaseIndex, simulationSpeed, currentPhase, nextPhase, incrementBatteryCharge]);
 
-    const timer = setInterval(() => {
-      elapsed += stepMs;
-      const progress = Math.min(100, (elapsed / totalMs) * 100);
-      setSimProgress(progress);
-
-      if (elapsed >= totalMs) {
-        clearInterval(timer);
-        if (currentPhaseIndex < 12) {
-          nextPhase();
-        } else {
-          stopSimulation();
-        }
-      }
-    }, stepMs);
-
-    return () => {
-      clearInterval(timer);
-      if (batteryInterval) clearInterval(batteryInterval);
-    };
-  }, [
-    isSimulating,
-    isPaused,
-    currentPhaseIndex,
-    simulationSpeed,
-    currentPhase,
-    nextPhase,
-    setSimProgress,
-    setSelectedComponentId,
-    setBatteryChargePercent,
-    stopSimulation,
-  ]);
-
-  if (!isSimulating) return null;
+  if (!isSimulating && !isPresentationMode) return null;
 
   return (
-    <div className="absolute bottom-6 left-6 right-6 z-30 flex flex-col gap-3 max-w-4xl mx-auto">
-      {/* Top Banner: Narration & Step Explanations */}
-      <div className="p-4 rounded-2xl bg-slate-950/90 backdrop-blur-xl border border-cyan-500/40 shadow-2xl shadow-cyan-500/10 text-white">
-        <div className="flex items-center justify-between gap-4 mb-1">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 text-xs font-bold border border-cyan-500/30">
-              {currentPhase.title}
-            </span>
-            <span className="text-xs font-medium text-slate-400">
-              {currentPhase.subtitle}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Speed Multipliers */}
-            {[0.5, 1.0, 2.0].map((spd) => (
-              <button
-                key={spd}
-                onClick={() => setSimulationSpeed(spd)}
-                className={`px-2 py-0.5 rounded text-[11px] font-bold border transition-all ${
-                  simulationSpeed === spd
-                    ? "bg-cyan-500 text-slate-950 border-cyan-400"
-                    : "bg-slate-800 text-slate-400 border-slate-700 hover:text-white"
-                }`}
-              >
-                {spd}x
-              </button>
-            ))}
-          </div>
+    <div className="absolute bottom-4 right-4 z-20 w-[420px] rounded-2xl bg-slate-900/95 border border-slate-700/80 p-4 shadow-2xl backdrop-blur-xl pointer-events-auto">
+      {/* Active Phase Banner */}
+      <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-2.5">
+        <div>
+          <span className="text-[9px] font-mono font-bold text-cyan-400 uppercase tracking-wider">
+            {currentPhase.title}
+          </span>
+          <h3 className="text-xs font-bold text-slate-100 font-sans mt-0.5">
+            {currentPhase.subtitle}
+          </h3>
         </div>
-
-        {/* Narration Body Text */}
-        <p className="text-sm font-normal text-slate-200 leading-relaxed mt-1">
-          {currentPhase.narration}
-        </p>
-
-        {/* Dynamic Phase Progress Bar */}
-        <div className="w-full h-1.5 bg-slate-800 rounded-full mt-3 overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-75 ease-linear rounded-full"
-            style={{ width: `${simProgress}%` }}
-          />
-        </div>
+        <span className="text-[10px] font-mono font-bold text-slate-400">
+          {currentPhaseIndex} / {SIMULATION_PHASES.length}
+        </span>
       </div>
 
-      {/* Bottom Controls Bar */}
-      <div className="flex items-center justify-between p-3 rounded-xl bg-slate-900/90 backdrop-blur-md border border-slate-800 text-slate-300">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => (isPaused ? resumeSimulation() : pauseSimulation())}
-            className="p-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition-all"
-            title={isPaused ? "Resume" : "Pause"}
-          >
-            {isPaused ? <Play className="w-4 h-4 fill-current" /> : <Pause className="w-4 h-4 fill-current" />}
-          </button>
+      {/* Narration Text */}
+      <p className="text-xs text-slate-300 font-sans leading-relaxed mb-3 line-clamp-2">
+        {currentPhase.narration}
+      </p>
 
+      {/* Phase Progress Bar */}
+      <div className="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden mb-3 border border-slate-800">
+        <div
+          className="bg-cyan-400 h-full transition-all duration-300 shadow-sm shadow-cyan-400"
+          style={{ width: `${(currentPhaseIndex / SIMULATION_PHASES.length) * 100}%` }}
+        />
+      </div>
+
+      {/* Simulation Controls & Speed Options */}
+      <div className="flex items-center justify-between pt-1">
+        <div className="flex items-center gap-1.5">
           <button
-            onClick={restartSimulation}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all"
+            onClick={isPaused ? resumeSimulation : pauseSimulation}
+            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-semibold transition-all"
+          >
+            {isPaused ? <Play className="w-3.5 h-3.5 fill-current" /> : <Pause className="w-3.5 h-3.5 fill-current" />}
+          </button>
+          <button
+            onClick={startSimulation}
+            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-semibold transition-all"
             title="Restart Simulation"
           >
-            <RotateCcw className="w-4 h-4" />
+            <RotateCcw className="w-3.5 h-3.5" />
           </button>
-
-          <button
-            onClick={prevPhase}
-            disabled={currentPhaseIndex <= 1}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-300 transition-all"
-            title="Previous Phase"
-          >
-            <SkipBack className="w-4 h-4" />
-          </button>
-
           <button
             onClick={nextPhase}
-            disabled={currentPhaseIndex >= 12}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-300 transition-all"
+            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-semibold transition-all"
             title="Next Phase"
           >
-            <SkipForward className="w-4 h-4" />
+            <SkipForward className="w-3.5 h-3.5" />
           </button>
-
-          <span className="text-xs font-semibold text-slate-400 ml-2">
-            PHASE {currentPhaseIndex} / 12
-          </span>
         </div>
 
-        {/* Phase Step Dots Scrubber */}
-        <div className="flex items-center gap-1.5">
-          {SIMULATION_PHASES.map((p) => (
+        {/* Speed Selector */}
+        <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 font-mono text-[10px]">
+          {[0.5, 1.0, 2.0].map((spd) => (
             <button
-              key={p.phaseIndex}
-              onClick={() => setPhaseIndex(p.phaseIndex)}
-              className={`w-3 h-3 rounded-full transition-all ${
-                currentPhaseIndex === p.phaseIndex
-                  ? "bg-cyan-400 ring-4 ring-cyan-500/20 scale-110"
-                  : p.phaseIndex < currentPhaseIndex
-                  ? "bg-cyan-600/60"
-                  : "bg-slate-700 hover:bg-slate-600"
+              key={spd}
+              onClick={() => setSimulationSpeed(spd)}
+              className={`px-2 py-0.5 rounded-lg transition-all ${
+                simulationSpeed === spd ? "bg-cyan-500 text-slate-950 font-bold" : "text-slate-400 hover:text-slate-200"
               }`}
-              title={`Jump to Phase ${p.phaseIndex}: ${p.title}`}
-            />
+            >
+              {spd}x
+            </button>
           ))}
         </div>
-
-        <button
-          onClick={stopSimulation}
-          className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/40 border border-slate-700 text-slate-300 transition-all"
-        >
-          EXIT SIMULATION
-        </button>
       </div>
     </div>
   );
