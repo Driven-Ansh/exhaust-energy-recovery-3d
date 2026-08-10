@@ -1,5 +1,4 @@
 import React from "react";
-import { Text } from "@react-three/drei";
 import { SYSTEM_DIMENSIONS } from "../../data/dimensions";
 import { useAppStore } from "../../store/useAppStore";
 
@@ -69,19 +68,6 @@ export function PowerElectronicsModel() {
             opacity={0.8}
           />
         </mesh>
-      )}
-
-      {/* Show 3D Label ONLY in Technical Mode */}
-      {isTechnical && (
-        <Text
-          position={[0, height / 2 + 0.5, 0]}
-          fontSize={0.35}
-          color={isSelected ? "#38bdf8" : "#94a3b8"}
-          anchorX="center"
-          anchorY="bottom"
-        >
-          10. POWER ELECTRONICS
-        </Text>
       )}
     </group>
   );
