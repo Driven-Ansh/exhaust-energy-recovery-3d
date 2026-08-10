@@ -17,6 +17,7 @@ import { ExhaustParticles } from "./ExhaustParticles";
 import { EnergyFlowLines } from "./EnergyFlowLines";
 import { VehicleChassis } from "./VehicleChassis";
 import { DimensionCallouts } from "./DimensionCallouts";
+import { HighlightAura } from "./HighlightAura";
 import { CameraController } from "./CameraController";
 import { useAppStore } from "../../store/useAppStore";
 
@@ -27,7 +28,6 @@ export function MainScene() {
 
   return (
     <>
-      {/* Unrestricted 360 Orbit Controls */}
       <OrbitControls
         ref={controlsRef}
         makeDefault
@@ -47,11 +47,9 @@ export function MainScene() {
 
       <CameraController controlsRef={controlsRef} />
 
-      {/* Cinematic Studio Lighting System matching Reference Image */}
       <hemisphereLight skyColor="#38bdf8" groundColor="#020617" intensity={0.9} />
       <ambientLight intensity={isTechnical ? 0.6 : 0.85} />
 
-      {/* Main Directional Key Light */}
       <directionalLight
         position={[25, 30, 25]}
         intensity={2.4}
@@ -59,20 +57,14 @@ export function MainScene() {
         shadow-mapSize={[2048, 2048]}
         shadow-bias={-0.0001}
       />
-
-      {/* Opposite Fill Light */}
       <directionalLight position={[-25, -15, -20]} intensity={1.4} color="#94a3b8" />
-
-      {/* Back Rim Light */}
       <directionalLight position={[0, 20, -25]} intensity={1.8} color="#38bdf8" />
 
-      {/* Accent Point Lights */}
       <pointLight position={[15.5, 3, 2]} intensity={2.5} color="#ea580c" />
       <pointLight position={[-0.25, 3, 2]} intensity={2.2} color="#00f0ff" />
       <pointLight position={[-8.5, 3, 2]} intensity={2.0} color="#2563eb" />
       <pointLight position={[-3.5, -2, 2.5]} intensity={2.0} color="#22c55e" />
 
-      {/* Ground Contact Shadow */}
       <ContactShadows
         position={[1.5, -2.6, 0]}
         opacity={0.8}
@@ -82,7 +74,6 @@ export function MainScene() {
         color="#020617"
       />
 
-      {/* Background Deselect Click Handler */}
       <group onClick={() => setSelected(null)}>
         <Baseplate />
         <EngineModel />
@@ -102,6 +93,7 @@ export function MainScene() {
         <EnergyFlowLines />
         <VehicleChassis />
         <DimensionCallouts />
+        <HighlightAura />
       </group>
     </>
   );
